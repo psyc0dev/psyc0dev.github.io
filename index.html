@@ -1,243 +1,571 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>psyc0dev Portfolio</title>
-  <link rel="stylesheet" href="./assets/css/style.css">
+  <title>psyc0dev — Midnight Financial Editorial & Systems Architecture</title>
+  <meta name="description" content="Personal developer workstation and portfolio of psyc0dev. High-craft systems engineering, Three.js 3D WebGL, GSAP motion, and interactive terminal interface.">
+  
+  <!-- Favicon / Meta -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+  
+  <!-- Google Fonts: Libre Baskerville, Inter, Fira Code -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- Critical Preloader Styles (Prevents FOUC and hiding text before animation) -->
+  <style>
+    body.is-loading {
+      overflow: hidden !important;
+    }
+    body.is-loading header,
+    body.is-loading main,
+    body.is-loading footer {
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    .page-loader {
+      position: fixed !important;
+      inset: 0 !important;
+      width: 100vw !important;
+      height: 100vh !important;
+      background-color: #000000 !important;
+      z-index: 9999999 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      pointer-events: all;
+      transition: opacity 0.5s ease;
+    }
+    .page-loader.dismissed {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+      opacity: 0 !important;
+    }
+    .loader-inner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      max-width: 500px;
+      max-height: 500px;
+    }
+    #hello-lottie-player {
+      width: 100%;
+      height: 100%;
+      filter: brightness(0) invert(1);
+    }
+  </style>
+
+  <!-- External Libraries (CDN) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script type="module" src="https://unpkg.com/@dotlottie/player-component@latest/dist/dotlottie-player.mjs"></script>
 </head>
+<body class="is-loading">
 
-<body>
-  <main>
-    <!-- NAVBAR -->
-    <nav class="navbar">
-      <ul class="navbar-list">
-        <li class="navbar-item">
-          <a href="#about" class="navbar-link active">About</a>
-        </li>
-        <li class="navbar-item">
-          <a href="#skills" class="navbar-link">Skills</a>
-        </li>
-        <li class="navbar-item">
-          <a href="#contact" class="navbar-link">Projects/Contact</a>
-        </li>
-      </ul>
-    </nav>
+  <!-- Fullscreen Black Page Loader (white hello.lottie) -->
+  <div id="page-loader" class="page-loader" aria-label="Loading workstation">
+    <div class="loader-inner">
+      <dotlottie-player
+        id="hello-lottie-player"
+        src="hello.lottie"
+        background="transparent"
+        speed="1"
+        autoplay>
+      </dotlottie-player>
+    </div>
+  </div>
 
-    <!-- PROFILE -->
-    <aside class="sidebar">
-      <div class="sidebar-info">
-        <figure class="avatar-box">
-          <img src="./assets/images/my-avatar.jpg" alt="psyc0dev" width="80">
-        </figure>
+  <!-- Top Navigation (Compact 48px Bar) -->
+  <header class="top-nav">
+    <div class="site-wrapper">
+      <div class="top-nav-inner">
+        <div class="brand-telemetry">
+          <a href="#" class="brand-logo">
+            <i data-lucide="terminal" class="brand-glyph"></i>
+            <span>psyc0dev</span>
+          </a>
+        </div>
 
-        <div class="info-content">
-          <h1 class="name">psyc0dev</h1>
-          <div class="title-container">
-            <p class="title"><span class="changing-title">Genius</span></p>
-          </div>
+        <nav class="nav-links desktop-only">
+          <a href="#terminal-section" class="nav-link active">Terminal</a>
+          <a href="#workflows" class="nav-link">Workflows</a>
+          <a href="#projects" class="nav-link">Projects</a>
+          <a href="#matrix" class="nav-link">Architecture</a>
+          <a href="#manifesto" class="nav-link">Manifesto</a>
+          <a href="#dispatch" class="nav-link">Dispatch</a>
+        </nav>
+
+        <div class="nav-action">
+          <a href="#dispatch" class="btn-ghost desktop-only">
+            <span>Contact</span>
+            <i data-lucide="arrow-right" class="anim-icon" style="width: 13px; height: 13px;"></i>
+          </a>
+          <button id="mobile-menu-toggle" class="mobile-menu-btn" aria-label="Toggle navigation menu" aria-expanded="false">
+            <i data-lucide="menu" id="mobile-menu-icon" class="anim-icon" style="width: 20px; height: 20px;"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Drawer Overlay -->
+    <div id="mobile-nav-drawer" class="mobile-nav-drawer" aria-hidden="true">
+      <nav class="mobile-drawer-links">
+        <a href="#terminal-section" class="mobile-nav-link active">
+          <i data-lucide="terminal-square" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Terminal Workstation</span>
+        </a>
+        <a href="#workflows" class="mobile-nav-link">
+          <i data-lucide="git-branch" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Automated Workflows</span>
+        </a>
+        <a href="#projects" class="mobile-nav-link">
+          <i data-lucide="folder-git-2" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Featured Systems</span>
+        </a>
+        <a href="#matrix" class="mobile-nav-link">
+          <i data-lucide="layers" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Stack Matrix</span>
+        </a>
+        <a href="#manifesto" class="mobile-nav-link">
+          <i data-lucide="book-open" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Engineering Creed</span>
+        </a>
+        <a href="#dispatch" class="mobile-nav-link mobile-cta-link">
+          <i data-lucide="send" class="anim-icon" style="width: 16px; height: 16px;"></i>
+          <span>Direct Dispatch</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Site Wrapper -->
+  <main class="site-wrapper">
+
+    <!-- Hero Composition (Midnight Editorial Stack & Mountain Ridge Line) -->
+    <section class="hero-editorial">
+      <div class="hero-stack">
+        <h1 class="hero-headline">
+          Creative technologist & <em>systems architect.</em>
+        </h1>
+        <p class="hero-subhead">
+          Personal developer portfolio of <strong>psyc0dev</strong>. Engineering low-latency distributed protocols, procedural GPU shaders, and deterministic UI systems in Rust, TypeScript, and Go.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#projects" class="btn-inverse">
+            <span>Explore Featured Systems</span>
+            <i data-lucide="arrow-down-right" class="anim-icon" style="width: 15px; height: 15px;"></i>
+          </a>
+          <a href="#terminal-section" class="btn-ghost">
+            <i data-lucide="terminal-square" class="anim-icon" style="width: 15px; height: 15px;"></i>
+            <span>Launch CLI Terminal</span>
+          </a>
         </div>
       </div>
 
-      <div class="contact-container">
-        <ul class="contacts-list">
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="mail-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
-              <a href="mailto:psyc0dev.main@gmail.com" class="contact-link">psyc0dev.main@gmail.com</a>
-            </div>
-          </li>
-
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="logo-github"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">GitHub</p>
-              <a href="https://github.com/psyc0dev" class="contact-link">github.com/psyc0dev</a>
-            </div>
-          </li>
-
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="location-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Location</p>
-              <address>who knows xD</address>
-            </div>
-          </li>
-        </ul>
+      <!-- Continuous Mountain Ridge Line SVG -->
+      <div class="mountain-ridge-container">
+        <svg class="mountain-ridge-svg" viewBox="0 0 1200 90" preserveAspectRatio="none">
+          <path d="M0,75 L80,68 L160,78 L230,52 L310,65 L390,38 L480,58 L570,22 L650,45 L740,15 L830,42 L910,28 L1000,56 L1090,35 L1200,60" />
+        </svg>
       </div>
-    </aside>
+    </section>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content">
-      <!-- ABOUT -->
-      <article class="about" id="about">
-        <header>
-          <h2 class="article-title">About me</h2>
-        </header>
+    <!-- Interactive Terminal Workstation (2x Expanded Full-Width Showcase) -->
+    <section class="section-container" id="terminal-section">
+      <div class="section-header">
+        <h2 class="section-title">Interactive Terminal Workstation</h2>
+        <p class="section-subhead">Direct telemetry, system diagnostics, and portfolio introspection powered by a zero-dependency keyboard CLI.</p>
+      </div>
 
-        <section class="about-text">
-          <p>
-            I'm psyc0dev
+      <div class="terminal-frame expanded-terminal" id="developer-terminal">
+        <div class="terminal-titlebar">
+          <div class="terminal-dots">
+            <span class="terminal-dot dot-red"></span>
+            <span class="terminal-dot dot-yellow"></span>
+            <span class="terminal-dot dot-green"></span>
+          </div>
+          <div class="terminal-title-text">psyc0dev@altitude-core: ~ (zsh)</div>
+          <div class="terminal-chips">
+            <span class="term-chip" data-cmd="neofetch">$ neofetch</span>
+            <span class="term-chip" data-cmd="projects">$ projects</span>
+            <span class="term-chip" data-cmd="workflows">$ workflows</span>
+            <span class="term-chip" data-cmd="skills">$ skills</span>
+            <span class="term-chip" data-cmd="clear">$ clear</span>
+          </div>
+        </div>
+
+        <div class="terminal-layout">
+          <aside class="terminal-sidebar">
+            <div class="sidebar-label">Platform Modules</div>
+            <ul class="sidebar-menu">
+              <li class="sidebar-item active" data-cmd="neofetch">
+                <i data-lucide="cpu" class="anim-icon" style="width: 15px; height: 15px;"></i>
+                <span>System Spec</span>
+              </li>
+              <li class="sidebar-item" data-cmd="projects">
+                <i data-lucide="folder-git-2" class="anim-icon" style="width: 15px; height: 15px;"></i>
+                <span>Repositories</span>
+              </li>
+              <li class="sidebar-item" data-cmd="workflows">
+                <i data-lucide="git-branch" class="anim-icon" style="width: 15px; height: 15px;"></i>
+                <span>Workflows</span>
+              </li>
+              <li class="sidebar-item" data-cmd="skills">
+                <i data-lucide="layers" class="anim-icon" style="width: 15px; height: 15px;"></i>
+                <span>Stack Matrix</span>
+              </li>
+              <li class="sidebar-item" data-cmd="contact">
+                <i data-lucide="send" class="anim-icon" style="width: 15px; height: 15px;"></i>
+                <span>Dispatch Link</span>
+              </li>
+            </ul>
+          </aside>
+
+          <div class="terminal-main-pane">
+            <div class="terminal-history" id="terminal-history"></div>
+            <div class="terminal-input-row">
+              <span class="terminal-prompt">psyc0dev@altitude:~$</span>
+              <div class="terminal-input-wrapper">
+                <input type="text" class="terminal-input" placeholder="type 'help', 'neofetch', 'projects'..." spellcheck="false" autocomplete="off">
+                <span class="terminal-ghost-hint"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Workflow Tile Grid (High-Contrast Off-White Interruption) -->
+    <section class="workflow-section-container" id="workflows">
+      <div class="section-header">
+        <h2 class="section-title">Automated Workflows</h2>
+        <p class="section-subhead">System orchestration pipelines engineered for autonomous compute, reliability, and scale.</p>
+      </div>
+
+      <div class="workflow-grid">
+        <div class="workflow-tile">
+          <i data-lucide="git-branch" class="workflow-tile-icon"></i>
+          <span class="workflow-tile-label">Continuous CI/CD Pipelines</span>
+        </div>
+        <div class="workflow-tile">
+          <i data-lucide="activity" class="workflow-tile-icon"></i>
+          <span class="workflow-tile-label">Low-Latency eBPF Tracing</span>
+        </div>
+        <div class="workflow-tile">
+          <i data-lucide="shield-check" class="workflow-tile-icon"></i>
+          <span class="workflow-tile-label">Cryptographic Protocol Sync</span>
+        </div>
+        <div class="workflow-tile">
+          <i data-lucide="database" class="workflow-tile-icon"></i>
+          <span class="workflow-tile-label">Distributed State Replication</span>
+        </div>
+        <div class="workflow-tile">
+          <i data-lucide="cpu" class="workflow-tile-icon"></i>
+          <span class="workflow-tile-label">GPU Shader Compute Passes</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Curated Projects Grid -->
+    <section class="section-container" id="projects">
+      <div class="section-header">
+        <h2 class="section-title">Featured Systems & Case Studies</h2>
+        <p class="section-subhead">Selected open-source protocols, GPU compute shaders, and low-latency infrastructure.</p>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <article class="project-card">
+          <div class="project-card-header">
+            <span class="project-tag">v1.4.0</span>
+            <span class="font-mono text-fog" style="font-size: 11px;">[GPU SHADER]</span>
+          </div>
+          <h3 class="project-title">Synapse WebGL</h3>
+          <p class="project-desc">
+            Real-time procedural neural field simulator with interactive GPU particle shaders, audio-reactive compute passes, and custom GLSL vertex deformation.
           </p>
-        </section>
+          <div class="project-tags">
+            <span class="project-tag">Three.js</span>
+            <span class="project-tag">WebGL2</span>
+            <span class="project-tag">GLSL</span>
+            <span class="project-tag">TypeScript</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/psyc0dev" target="_blank" rel="noopener noreferrer" class="project-link-btn">
+              <i data-lucide="code-2" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Source
+            </a>
+            <a href="#altitude-viewport" class="project-link-btn">
+              <i data-lucide="external-link" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Inspect Topology
+            </a>
+          </div>
+        </article>
 
-        <!-- SERVICES -->
-        <section class="service">
-          <h3 class="service-title">What I do</h3>
+        <!-- Project 2 -->
+        <article class="project-card">
+          <div class="project-card-header">
+            <span class="project-tag">v0.9.2</span>
+            <span class="font-mono text-fog" style="font-size: 11px;">[DISTRIBUTED]</span>
+          </div>
+          <h3 class="project-title">Aether Protocol</h3>
+          <p class="project-desc">
+            High-throughput distributed state sync engine featuring lock-free memory rings, binary WebSocket streams, and persistent transactional storage in Rust.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Rust</span>
+            <span class="project-tag">Tokio</span>
+            <span class="project-tag">WebSockets</span>
+            <span class="project-tag">RocksDB</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/psyc0dev" target="_blank" rel="noopener noreferrer" class="project-link-btn">
+              <i data-lucide="cpu" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Source
+            </a>
+            <a href="#matrix" class="project-link-btn">
+              <i data-lucide="bar-chart-2" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Benchmarks
+            </a>
+          </div>
+        </article>
 
-          <ul class="service-list">
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/web-svgrepo-com.svg" alt="Web development icon" width="40">
+        <!-- Project 3 -->
+        <article class="project-card">
+          <div class="project-card-header">
+            <span class="project-tag">v2.1.0</span>
+            <span class="font-mono text-fog" style="font-size: 11px;">[DESIGN SYSTEM]</span>
+          </div>
+          <h3 class="project-title">Altitude Design System</h3>
+          <p class="project-desc">
+            A midnight financial editorial design system with razor-thin hairline borders, five-tier gray surface stratification, and single-accent discipline.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Vanilla CSS</span>
+            <span class="project-tag">GSAP</span>
+            <span class="project-tag">Design Tokens</span>
+            <span class="project-tag">Libre Baskerville</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/psyc0dev" target="_blank" rel="noopener noreferrer" class="project-link-btn">
+              <i data-lucide="layers" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Source
+            </a>
+            <a href="#manifesto" class="project-link-btn">
+              <i data-lucide="book-open" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Design Spec
+            </a>
+          </div>
+        </article>
+
+        <!-- Project 4 -->
+        <article class="project-card">
+          <div class="project-card-header">
+            <span class="project-tag">v3.0.1</span>
+            <span class="font-mono text-fog" style="font-size: 11px;">[TELEMETRY]</span>
+          </div>
+          <h3 class="project-title">Hyperion CLI</h3>
+          <p class="project-desc">
+            Continuous kernel telemetry daemon and performance tracer utilizing eBPF probes with zero CPU footprint and instant interactive terminal visualization.
+          </p>
+          <div class="project-tags">
+            <span class="project-tag">Go</span>
+            <span class="project-tag">eBPF</span>
+            <span class="project-tag">CLI</span>
+            <span class="project-tag">Linux</span>
+          </div>
+          <div class="project-links">
+            <a href="https://github.com/psyc0dev" target="_blank" rel="noopener noreferrer" class="project-link-btn">
+              <i data-lucide="terminal-square" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Source
+            </a>
+            <a href="#terminal-section" class="project-link-btn">
+              <i data-lucide="terminal" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              Run in Terminal
+            </a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Data Table / Technical Architecture Matrix -->
+    <section class="section-container" id="matrix">
+      <div class="section-header">
+        <h2 class="section-title">Technical Architecture & Stack Matrix</h2>
+        <p class="section-subhead">Data-dense specification of core engineering disciplines, runtimes, and telemetry.</p>
+      </div>
+
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Domain</th>
+              <th>Technologies & Toolchains</th>
+              <th>Performance Target</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Frontend & 3D WebGL</strong></td>
+              <td>Three.js, WebGL2, GLSL Shaders, GSAP 3, TypeScript</td>
+              <td>60 FPS / &lt;16ms frame budget</td>
+              <td><span class="project-tag">PROD READY</span></td>
+            </tr>
+            <tr>
+              <td><strong>Systems & Distributed</strong></td>
+              <td>Rust (Async/Tokio), RocksDB, WebSockets, gRPC</td>
+              <td>Sub-5ms message roundtrip</td>
+              <td><span class="project-tag">ACTIVE</span></td>
+            </tr>
+            <tr>
+              <td><strong>Kernel & Telemetry</strong></td>
+              <td>Go, Linux eBPF, Prometheus, Zero-alloc buffers</td>
+              <td>&lt;0.1% CPU overhead</td>
+              <td><span class="project-tag">BENCHMARKED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Editorial Typography</strong></td>
+              <td>Libre Baskerville, Inter, Fira Code, CSS Custom Tokens</td>
+              <td>Zero layout shift (CLS: 0.00)</td>
+              <td><span class="project-tag">STABLE</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Manifesto & Editorial Creed -->
+    <section class="section-container" id="manifesto">
+      <div class="section-header">
+        <h2 class="section-title">Engineering Creed</h2>
+        <p class="section-subhead">The interface recedes so the craft can speak.</p>
+      </div>
+
+      <div class="feature-split-grid">
+        <div class="feature-copy">
+          <p class="feature-lead" style="color: var(--color-bone);">
+            Altitude operates in a midnight editorial register: near-black canvas, off-white serif headlines, and razor-thin secondary type. The serif-on-dark pairing signals authority, restraint, and discretion.
+          </p>
+          <p class="feature-lead">
+            I build software that respects human attention: instant load times, zero decorative noise, and uncompromising tactile feedback. Every boundary is a hairline border or an authentic color edge.
+          </p>
+          <div style="margin-top: var(--spacing-16);">
+            <a href="#projects" class="btn-ghost">
+              <i data-lucide="folder-git-2" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              <span>Engineering Archive</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="form-card">
+          <div class="sidebar-label" style="margin-bottom: 12px;">SYSTEM SPECIFICATION</div>
+          <div class="font-mono" style="font-size: 12px; line-height: 1.8; color: var(--color-fog);">
+            <div><span class="text-voltage">USER:</span> psyc0dev @ altitude-core</div>
+            <div><span class="text-voltage">ROLE:</span> Creative Technologist / Systems Eng</div>
+            <div><span class="text-voltage">RUNTIME:</span> WebGL2 / Three.js r128 / ES6+</div>
+            <div><span class="text-voltage">PALETTE:</span> Carbon (#181818), Bone (#eeeeee), Blue (#2b7fff)</div>
+            <div><span class="text-voltage">UPTIME:</span> 99.99% — Always Shipping</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact & Direct Dispatch Section -->
+    <section class="section-container" id="dispatch">
+      <div class="section-header">
+        <h2 class="section-title">Direct Dispatch & Inquiries</h2>
+        <p class="section-subhead">Available for strategic architectures, 3D graphics, and systems collaboration.</p>
+      </div>
+
+      <div class="feature-split-grid">
+        <div class="feature-copy">
+          <p class="feature-lead">
+            Looking to build high-craft web experiences, procedural 3D compute, or resilient distributed systems? Reach out directly via CLI command or email.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+            <div>
+              <label class="form-label">RUN IN YOUR TERMINAL:</label>
+              <div class="copy-snippet-box" data-copy="npx psyc0dev contact" title="Click to copy">
+                <span>$ npx psyc0dev contact</span>
+                <i data-lucide="copy" class="anim-icon" style="width: 14px; height: 14px;"></i>
               </div>
-              <div class="service-content-box">
-                <h4 class="service-item-title">Web Development</h4>
-                <p class="service-item-text">
-                  Modern and responsive websites using the latest technologies.
-                </p>
-              </div>
-            </li>
-
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/telegram-svgrepo-com.svg" alt="telegram icon" width="40">
-              </div>
-              <div class="service-content-box">
-                <h4 class="service-item-title">Telegram Bots</h4>
-                <p class="service-item-text">
-                  Innovative and multifunctional telegram bots for all needs.
-                </p>
-              </div>
-            </li>
-          </ul>
-        </section>
-      </article>
-
-      <!-- SKILLS -->
-      <article class="skills" id="skills">
-        <header>
-          <h2 class="article-title">Skills</h2>
-        </header>
-
-        <section class="skill">
-          <ul class="skills-list content-card">
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">Python</h5>
-                <data value="90">75%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 75%;"></div>
-              </div>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">Java</h5>
-                <data value="85">50%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 50%;"></div>
-              </div>
-            </li>
-
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">React</h5>
-                <data value="75">35%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 35%;"></div>
-              </div>
-            </li>
-          </ul>
-        </section>
-      </article>
-
-      <!-- PROJECTS -->
-      <article class="portfolio" id="projects">
-        <header>
-          <h2 class="article-title">Projects</h2>
-        </header>
-
-        <section class="projects">
-          <ul class="project-list">
-            <li class="project-item active">
-              <a href="https://psyc0dev.github.io/gokids">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/blog-2.jpg" alt="gokids" loading="lazy">
-                </figure>
-                <h3 class="project-title">GoKids Landing Page</h3>
-                <p class="project-category">Web Development</p>
-              </a>
-            </li>
-
-            <li class="project-item active">
-              <a href="https://t.me/extra_shopbot?start">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-9.png" alt="extrashop" loading="lazy">
-                </figure>
-                <h3 class="project-title">Extra Shop</h3>
-                <p class="project-category">Telegram Bot</p>
-              </a>
-            </li>
-          </ul>
-        </section>
-      </article>
-
-      <!-- CONTACT -->
-      <article class="contact" id="contact">
-        <header>
-          <h2 class="article-title">Contact</h2>
-        </header>
-
-        <section class="contact-form">
-          <h3 class="form-title">Get In Touch</h3>
-
-          <form action="#" class="form" data-form>
-            <div class="input-wrapper">
-              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
             </div>
 
-            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
+            <div>
+              <label class="form-label">DIRECT DISPATCH EMAIL:</label>
+              <div class="copy-snippet-box" data-copy="hello@psyc0.dev" title="Click to copy">
+                <span>hello@psyc0.dev</span>
+                <i data-lucide="copy" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <button class="form-btn" type="submit" disabled data-form-btn>
-              <ion-icon name="paper-plane"></ion-icon>
-              <span>Send Message</span>
+        <div class="form-card">
+          <form id="contact-form">
+            <div class="form-group">
+              <label for="contact-name" class="form-label">Callsign / Name</label>
+              <input type="text" id="contact-name" class="form-input" placeholder="e.g. Satoshi Nakamoto" required>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-email" class="form-label">Communication Channel / Email</label>
+              <input type="email" id="contact-email" class="form-input" placeholder="you@domain.com" required>
+            </div>
+
+            <div class="form-group">
+              <label for="contact-message" class="form-label">Transmission Payload</label>
+              <textarea id="contact-message" class="form-textarea" placeholder="Describe the mission, architectural scope, or idea..." required></textarea>
+            </div>
+
+            <button type="submit" class="btn-ghost" style="width: 100%; justify-content: center;">
+              <i data-lucide="send" class="anim-icon" style="width: 14px; height: 14px;"></i>
+              <span>Transmit Message</span>
             </button>
           </form>
-          
-        </section>
-      </article>
-    </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <!-- SCRIPTS -->
-  <script src="./assets/js/script.js"></script>
-  <script src="./assets/js/title-changer.js"></script>
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+  <!-- Site Footer (Obsidian Base) -->
+  <footer class="site-footer">
+    <div class="site-wrapper">
+      <div class="footer-inner">
+        <div>
+          <span>© 2026 <strong>psyc0dev</strong>. Midnight Financial Editorial Architecture.</span>
+          <span style="margin-left: 12px; color: var(--color-smoke);">MIT License</span>
+        </div>
 
+        <div class="footer-links">
+          <a href="#projects">Archive</a>
+          <a href="#terminal-section">Terminal</a>
+          <a href="#workflows">Workflows</a>
+          <a href="#projects">Projects</a>
+          <a href="#dispatch">Dispatch</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="js/terminal.js"></script>
+  <script src="js/animations.js"></script>
+  <script src="js/app.js"></script>
 
 </body>
-
 </html>
