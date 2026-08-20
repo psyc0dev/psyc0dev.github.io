@@ -1,5 +1,2 @@
-## Made With 💖 by psyc0dev
-
-## License
-
-MIT
+## by psyc0dev 🔜
+[Bio website](https://psyc0dev.github.io/psyc0dev)
