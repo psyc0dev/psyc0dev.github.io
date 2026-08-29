@@ -11,7 +11,7 @@
  */
 (function () {
   const STORAGE_KEY = 'psyc0dev-lang';
-  const TITLES = { en: 'psyc0dev | Developer Portfolio', ru: 'psyc0dev | Портфолио' };
+  const TITLES = { en: 'psyc0dev | Portfolio', ru: 'psyc0dev | Портфолио' };
 
   // prettier-ignore
   const RU = [
@@ -92,8 +92,7 @@
     // About
     { s: '#about .section-title', h: 'Обо мне' },
     { s: '#about .section-subhead', h: 'Почему этот сайт выглядит именно так.' },
-    { s: '#about .feature-lead:nth-of-type(1)', h: 'Я psyc0dev. Заботлюсь о деталях: быстрая загрузка, чистая типографика, интерфейсы, которые уважают ваше внимание. Люблю работать близко к железу: шейдеры, протоколы, бюджеты производительности. Всё остальное держу простым.' },
-    { s: '#about .feature-lead:nth-of-type(2)', h: 'Этот сайт собран вручную: ванильный CSS и GSAP, без фреймворков. Дизайн-язык, который я зову Altitude, заимствует у финансовой печати: почти чёрный холст, serif-заголовки, тонкие линии и один синий акцент.' },
+    { s: '#about .feature-lead:nth-of-type(1)', h: 'Большинство проектов я делаю, потому что хочу сделать жизнь людей лучше, и воссоздаю миниигры и плагины из детства. Скоро могу выложить исходники <span class="hover-preview" tabindex="0">CS2-чита<img class="hover-preview-img" src="assets/menu.png" alt="" loading="lazy" /></span>, написанного в этом году.' },
     { s: '#about .btn-ghost span', t: 'Написать мне' },
     { s: '#about .form-card .sidebar-label', t: 'КОРОТКО О ГЛАВНОМ' },
     { s: '#about .form-card .font-mono div:nth-child(1)', h: '<span class="text-voltage">ФОКУС:</span> веб · десктоп · боты' },
@@ -104,8 +103,8 @@
 
     // Contact
     { s: '#contact .section-title', h: 'Контакты' },
-    { s: '#contact .section-subhead', h: 'Хотите начать проект или поболтать о коде? Пишите на почту.' },
-    { s: '#contact .feature-copy .feature-lead', h: 'Расскажите про веб-приложение, десктоп-тул или системную задачу, которую нужно решить. Лучше всего почтой. Форма приходит на тот же адрес.' },
+    { s: '#contact .section-subhead', h: 'Хотите начать проект или поболтать? Пишите на почту.' },
+    { s: '#contact .feature-copy .feature-lead', h: 'Расскажите про веб-приложение, десктоп-тул или системную задачу, которую нужно решить. Лучше всего через Telegram. Форма приходит на Телеграм.' },
     { s: '#contact .feature-copy label.form-label', t: 'ПОЧТА:' },
     { s: '#contact-form label[for="contact-name"]', t: 'Ваше имя' },
     { s: '#contact-form label[for="contact-email"]', t: 'Почта' },

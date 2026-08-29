@@ -224,19 +224,9 @@ button {
 /* ==========================================================================
    Typography Utilities
    ========================================================================== */
-.font-serif {
-  font-family: var(--font-libre-baskerville);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-}
-
 .font-mono {
   font-family: var(--font-fira-code);
   letter-spacing: 0.1em;
-}
-
-.font-inter {
-  font-family: var(--font-inter);
 }
 
 .text-voltage {
@@ -245,14 +235,6 @@ button {
 
 .text-fog {
   color: var(--color-fog);
-}
-
-.text-smoke {
-  color: var(--color-smoke);
-}
-
-.text-bone {
-  color: var(--color-bone);
 }
 
 /* ==========================================================================
@@ -518,21 +500,6 @@ button {
   color: var(--color-obsidian);
 }
 
-.text-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-family: var(--font-inter);
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--color-voltage-blue);
-  transition: opacity 0.15s ease;
-}
-
-.text-link:hover {
-  opacity: 0.8;
-}
-
 /* ==========================================================================
    Hero Composition (Midnight Financial Editorial Stack)
    ========================================================================== */
@@ -626,20 +593,76 @@ button {
   gap: var(--spacing-16);
 }
 
-.feature-heading {
-  font-family: var(--font-libre-baskerville);
-  font-size: 32px;
-  font-weight: 400;
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-  color: var(--color-bone);
-}
-
 .feature-lead {
   font-family: var(--font-inter);
   font-size: 15px;
   color: var(--color-fog);
   line-height: 1.6;
+}
+
+.feature-quote {
+  margin: 0;
+  padding: 4px 0 4px 18px;
+  border-left: 2px solid var(--color-voltage-blue);
+  font-family: var(--font-libre-baskerville);
+  font-style: italic;
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--color-fog);
+}
+
+.feature-quote cite {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-inter);
+  font-style: normal;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--color-smoke);
+}
+
+/* ==========================================================================
+   CS2 cheat hover preview (desktop: hover, touch: tap toggle)
+   ========================================================================== */
+.hover-preview {
+  position: relative;
+  cursor: help;
+  border-bottom: 1px dashed var(--color-smoke);
+  outline: none;
+}
+
+.hover-preview-img {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  width: min(560px, 90vw);
+  transform: translateX(-50%) scale(0.92) translateY(6px);
+  opacity: 0;
+  pointer-events: none;
+  border: 1px solid var(--color-slate-elevated);
+  border-radius: var(--radius-cards);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.65);
+  transition: opacity 0.22s ease,
+    transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 5000;
+}
+
+.hover-preview:hover .hover-preview-img,
+.hover-preview:focus .hover-preview-img,
+.hover-preview:focus-visible .hover-preview-img,
+.hover-preview.tapped .hover-preview-img {
+  opacity: 1;
+  transform: translateX(-50%) scale(1) translateY(0);
+}
+
+.hover-preview.no-img {
+  cursor: auto;
+  border-bottom: none;
+}
+
+.hover-preview.no-img .hover-preview-img {
+  display: none;
 }
 
 /* ==========================================================================
@@ -658,14 +681,14 @@ button {
 }
 
 .cat-photo {
-  width: 380px;
+  width: 256;
   max-width: 58%;
   height: auto;
   border-radius: var(--radius-cards);
 }
 
 .cube-photo {
-  width: 380px;
+  width: 256px;
   max-width: 58%;
   height: auto;
   border-radius: var(--radius-cards);
@@ -678,41 +701,6 @@ button {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-smoke);
-}
-
-.lang-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-}
-
-.lang-option {
-  font-family: var(--font-inter);
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--color-smoke);
-  background: transparent;
-  border: none;
-  padding: 4px 5px;
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.lang-option:hover {
-  color: var(--color-bone);
-  background: transparent;
-}
-
-.lang-option.active {
-  color: var(--color-voltage-blue);
-  background: transparent;
-}
-
-.lang-sep {
-  color: var(--color-pewter);
-  font-size: 10px;
-  user-select: none;
 }
 
 .lang-toggle {
@@ -1111,29 +1099,6 @@ button {
   height: 22px;
 }
 
-.footer-mail {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  width: fit-content;
-  font-size: 13px;
-  color: var(--color-voltage-blue);
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s ease, color 0.15s ease;
-}
-
-.footer-mail:hover {
-  color: var(--color-pure-white);
-  border-bottom-color: var(--color-voltage-blue);
-}
-
-.footer-cube {
-  width: 48px;
-  height: 48px;
-  margin-left: 6px;
-  border-radius: var(--radius-buttons);
-}
-
 .footer-cols {
   display: flex;
   gap: var(--spacing-48);
@@ -1323,10 +1288,7 @@ body.is-loading {
   color: var(--color-voltage-blue);
 }
 
-.canvas-header:hover svg {
-  transform: scale(1.2) translateY(-2px);
-  color: var(--color-voltage-blue);
-}
+
 
 @keyframes iconBreathe {
   0% {
@@ -1529,6 +1491,26 @@ body.is-loading {
   /* Mobile Navigation Drawer & Ultra-Responsive Touch Support */
   .mobile-nav-drawer {
     background: #111111 !important;
+  }
+
+  /* CS2 cheat preview on touch: tap = centered overlay */
+  .hover-preview.tapped .hover-preview-img {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    bottom: auto;
+    width: 100vw;
+    transform: translate(-50%, -50%);
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+  }
+
+  .hover-preview.tapped::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
   }
 
   /* Workflows */

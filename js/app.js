@@ -100,4 +100,36 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+
+  // 4. CS2 cheat preview: tap toggle (touch) + outside/Escape close
+  const cs2Preview = document.querySelector('.hover-preview');
+  if (cs2Preview) {
+    cs2Preview.addEventListener('click', (e) => {
+      if (cs2Preview.classList.contains('no-img')) return;
+      e.stopPropagation();
+      cs2Preview.classList.toggle('tapped');
+    });
+    document.addEventListener('click', (e) => {
+      if (!cs2Preview.contains(e.target)) cs2Preview.classList.remove('tapped');
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') cs2Preview.classList.remove('tapped');
+    });
+    // if menu.png is missing, hide the hover affordance entirely
+    document.addEventListener(
+      'error',
+      (e) => {
+        const img = e.target;
+        if (
+          img &&
+          img.classList &&
+          img.classList.contains('hover-preview-img')
+        ) {
+          const host = img.closest('.hover-preview');
+          if (host) host.classList.add('no-img');
+        }
+      },
+      true
+    );
+  }
 });
