@@ -14,6 +14,6 @@ developer — desktop apps, web platforms, Telegram bots, Rust tooling
 
 ## links
 
-- site: [psyc0dev.github.io](https://psyc0dev.github.io)
+- site: [psyc0dev.github.io/psyc0dev](https://psyc0dev.github.io/psyc0dev)
 - telegram: [@psyc0dev](https://t.me/psyc0dev)
 - email: [psyc0dev.main@gmail.com](mailto:psyc0dev.main@gmail.com)
