@@ -1,0 +1,7 @@
+name = "psyc0dev-contact"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+
+[vars]
+# Comma-separated list of origins allowed to POST to this worker.
+ALLOWED_ORIGIN = "https://psyc0dev.github.io,http://localhost:8123,http://127.0.0.1:8123"

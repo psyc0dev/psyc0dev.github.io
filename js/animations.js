@@ -72,7 +72,7 @@ class AnimationController {
 
       // 5. Interactive brand glyph micro-animation
       if (typeof gsap !== 'undefined') {
-        const glyph = brandLogo.querySelector('.brand-glyph, svg');
+        const glyph = brandLogo.querySelector('.brand-avatar, .brand-glyph, svg');
         if (glyph) {
           gsap.fromTo(glyph, 
             { rotate: 0, scale: 0.8 }, 
@@ -283,6 +283,21 @@ class AnimationController {
         }
       });
     });
+
+    // Footer back-to-top (fixed header can't be a scroll target, so scroll to 0 directly)
+    document.querySelectorAll('.back-to-top').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (this.lenis) {
+          this.lenis.scrollTo(0, {
+            duration: 1.15,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+          });
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
   }
 
   initPageLoader(onComplete) {
@@ -400,18 +415,6 @@ class AnimationController {
     if (typeof ScrollTrigger !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
 
-      // Terminal Workstation reveal
-      gsap.from('.terminal-frame', {
-        scrollTrigger: {
-          trigger: '.terminal-frame',
-          start: 'top 85%'
-        },
-        y: 35,
-        opacity: 0,
-        duration: 0.7,
-        ease: 'power3.out'
-      });
-
       // Workflow Tiles Stagger
       gsap.from('.workflow-tile', {
         scrollTrigger: {
@@ -494,6 +497,10 @@ class AnimationController {
             mLink.classList.add('active');
           }
         });
+      } else {
+        // At the hero (before any section) nothing in the nav is highlighted.
+        navLinks.forEach(link => link.classList.remove('active'));
+        document.querySelectorAll('.mobile-nav-link').forEach(mLink => mLink.classList.remove('active'));
       }
     };
 
@@ -520,50 +527,56 @@ class AnimationController {
   initLucideIcons() {
     if (typeof lucide !== 'undefined') {
       lucide.createIcons();
-
-      // Dynamic spring micro-interactions on interactive cards and buttons
-      document.querySelectorAll('.btn-ghost, .btn-inverse, .project-card, .workflow-tile, .project-link-btn, .copy-snippet-box, .brand-logo, .sidebar-item').forEach(container => {
-        const icon = container.querySelector('svg, .anim-icon');
-        if (!icon) return;
-
-        container.addEventListener('mouseenter', () => {
-          if (typeof gsap !== 'undefined') {
-            gsap.to(icon, {
-              scale: 1.22,
-              rotation: 6,
-              duration: 0.25,
-              ease: 'back.out(2.5)'
-            });
-          }
-        });
-
-        container.addEventListener('mouseleave', () => {
-          if (typeof gsap !== 'undefined') {
-            gsap.to(icon, {
-              scale: 1,
-              rotation: 0,
-              duration: 0.25,
-              ease: 'power2.out'
-            });
-          }
-        });
-      });
     }
   }
 
   initCopyButtons() {
     const snippetBoxes = document.querySelectorAll('.copy-snippet-box');
     snippetBoxes.forEach(box => {
+      let revertTimer = null;
+
+      const markCopied = () => {
+        box.classList.add('copied');
+        if (revertTimer) clearTimeout(revertTimer);
+        revertTimer = setTimeout(() => box.classList.remove('copied'), 2000);
+      };
+
+      const legacyCopy = (text) => {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        let ok = false;
+        try {
+          ok = document.execCommand('copy');
+        } catch (e) {
+          ok = false;
+        }
+        document.body.removeChild(ta);
+        return ok;
+      };
+
       box.addEventListener('click', () => {
-        const textToCopy = box.getAttribute('data-copy') || box.textContent.trim();
-        navigator.clipboard.writeText(textToCopy).then(() => {
-          this.showToast(`Copied to clipboard: "${textToCopy}"`);
-          const icon = box.querySelector('svg');
-          if (icon && typeof gsap !== 'undefined') {
-            gsap.fromTo(icon, { scale: 0.75 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' });
-          }
+        const textToCopy =
+          box.getAttribute('data-copy') || box.textContent.trim();
+        const t = window.__t || ((ru, en) => en);
+
+        const write = navigator.clipboard
+          ? navigator.clipboard.writeText(textToCopy)
+          : Promise.reject(new Error('no clipboard api'));
+
+        write.then(() => {
+          this.showToast(`${t('Скопировано: ', 'Copied to clipboard: "')}${textToCopy}${t('"', '"')}`);
+          markCopied();
         }).catch(() => {
-          this.showToast('Copied text!');
+          if (legacyCopy(textToCopy)) {
+            this.showToast(`${t('Скопировано: ', 'Copied to clipboard: "')}${textToCopy}${t('"', '"')}`);
+            markCopied();
+          } else {
+            this.showToast(t('Скопировано!', 'Copied text!'));
+          }
         });
       });
     });

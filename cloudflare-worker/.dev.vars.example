@@ -1,0 +1,4 @@
+# Local test values for `npx wrangler dev` (never commit real secrets)
+TELEGRAM_BOT_TOKEN=123456:ABC-your-bot-token
+TELEGRAM_CHAT_ID=1022239785
+# ALLOWED_ORIGIN=*

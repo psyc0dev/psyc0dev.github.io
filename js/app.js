@@ -1,22 +1,16 @@
 /**
  * Altitude / psyc0dev — Main Application Orchestrator
- * Bootstraps Developer Terminal, GSAP animations, Lucide icons, and interactive filters.
+ * Bootstraps GSAP animations, Lucide icons, and interactive filters.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize Developer Terminal CLI
-  let terminal = null;
-  if (typeof DeveloperTerminal !== 'undefined') {
-    terminal = new DeveloperTerminal('developer-terminal');
-  }
-
-  // 2. Initialize GSAP & Lucide Animations
+  // 1. Initialize GSAP & Lucide Animations
   let animations = null;
   if (typeof AnimationController !== 'undefined') {
     animations = new AnimationController();
   }
 
-  // 3. Project Filtering Chips
+  // 2. Project Filtering Chips
   const filterPills = document.querySelectorAll('.project-filter-pill');
   const projectCards = document.querySelectorAll('.project-card');
 
@@ -41,24 +35,69 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 4. Contact Form Handler
+  // 3. Contact Form Handler
+  // Paste your deployed worker URL here (see cloudflare-worker/README.md).
+  // While it is empty, submitting the form opens the visitor's mail client.
+  const CONTACT_ENDPOINT = 'https://psyc0dev-contact.psyc0dev.workers.dev/submit';
+
   const contactForm = document.getElementById('contact-form');
   if (contactForm) {
-    contactForm.addEventListener('submit', (e) => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const sender = document.getElementById('contact-name')?.value || 'Guest';
-      const email = document.getElementById('contact-email')?.value || 'unknown@domain';
-      const msg = document.getElementById('contact-message')?.value || '';
+      const btn = contactForm.querySelector('button[type="submit"]');
+      const label = btn ? btn.querySelector('span') : null;
+      const t = window.__t || ((ru, en) => en);
 
-      if (animations) {
-        animations.showToast(`Message dispatched from ${sender}! Check terminal log.`);
+      const payload = {
+        name: (document.getElementById('contact-name')?.value || '').trim(),
+        email: (document.getElementById('contact-email')?.value || '').trim(),
+        telegram: (document.getElementById('contact-telegram')?.value || '')
+          .trim()
+          .replace(/^@+/, ''),
+        message: (document.getElementById('contact-message')?.value || '').trim(),
+        _gotcha: document.getElementById('contact-gotcha')?.value || '',
+      };
+
+      const finish = (msg) => {
+        if (animations) animations.showToast(msg);
+        if (label) label.textContent = t('Отправить', 'Send Message');
+        if (btn) btn.disabled = false;
+      };
+
+      if (label) label.textContent = t('Отправка...', 'Sending...');
+      if (btn) btn.disabled = true;
+
+      try {
+        if (!CONTACT_ENDPOINT) {
+          // No worker configured yet: hand the message to the mail client.
+          const tg = payload.telegram ? '\nTelegram: @' + payload.telegram : '';
+          const subject = encodeURIComponent('Portfolio message from ' + payload.name);
+          const body = encodeURIComponent(
+            payload.message + tg + '\n\nFrom: ' + payload.name + ' <' + payload.email + '>'
+          );
+          window.location.href =
+            'mailto:psyc0dev.main@gmail.com?subject=' + subject + '&body=' + body;
+          finish(t('Открываю почту...', 'Opening your mail client...'));
+          return;
+        }
+
+        const res = await fetch(CONTACT_ENDPOINT, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        const out = await res.json().catch(() => ({}));
+        if (res.ok && out.ok) {
+          finish(t('Сообщение отправлено!', 'Message sent!'));
+          contactForm.reset();
+        } else {
+          finish(
+            t('Не отправилось: ' + (out.error || 'server error'), 'Failed: ' + (out.error || 'server error'))
+          );
+        }
+      } catch (err) {
+        finish(t('Ошибка сети. Напишите на почту.', 'Network error. Email me instead.'));
       }
-
-      if (terminal) {
-        terminal.execute(`echo [DISPATCH SUCCESS] Transmission from ${sender} (${email}) queued.`);
-      }
-
-      contactForm.reset();
     });
   }
 });
