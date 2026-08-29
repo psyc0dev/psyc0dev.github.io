@@ -7,9 +7,9 @@ developer — desktop apps, web platforms, Telegram bots, Rust tooling
 [![email](https://img.shields.io/badge/email-psyc0dev.main@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:psyc0dev.main@gmail.com)
 
 <div align="center">
-  <img height="165em" src="https://github-readme-stats-sigma-five.vercel.app/api?username=psyc0dev&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" />
+  <img height="165em" src="https://github-readme-stats-one-bice.vercel.app/api?username=psyc0dev&show_icons=true&theme=tokyonight&hide_border=true&count_private=true&include_all_commits=true" />
   <img height="165em" src="https://streak-stats.demolab.com?user=psyc0dev&theme=tokyonight&hide_border=true" />
-  <img height="165em" src="https://github-readme-stats-sigma-five.vercel.app/api/top-langs/?username=psyc0dev&layout=compact&theme=tokyonight&hide_border=true&langs_count=6" />
+  <img height="165em" src="https://github-readme-stats-theta-ruddy.vercel.app/api/top-langs/?username=psyc0dev&layout=compact&theme=tokyonight&hide_border=true&langs_count=6" />
 </div>
 
 ## links
