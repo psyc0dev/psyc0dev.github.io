@@ -114,40 +114,60 @@ class AnimationController {
 
         if (typeof gsap !== 'undefined') {
           isAnimating = true;
-          gsap.killTweensOf([drawer, drawerLinks, '.mobile-nav-link .anim-icon']);
+          gsap.killTweensOf([drawer, drawerLinks, '.mobile-nav-index', '.mobile-nav-link .anim-icon', '.mobile-nav-label', '.mobile-nav-arrow']);
 
           // Drawer slide and glass fade
           gsap.fromTo(drawer, 
-            { y: -18, opacity: 0 }, 
+            { y: -20, opacity: 0 }, 
             { y: 0, opacity: 1, duration: 0.35, ease: 'power3.out' }
           );
 
-          // Staggered luxury link slide-in
+          // Staggered luxury card tab slide-in with scale & blur
           gsap.fromTo(drawerLinks, 
-            { y: 16, opacity: 0, x: -8 }, 
+            { y: 26, opacity: 0, scale: 0.94, filter: 'blur(6px)' }, 
             { 
               y: 0, 
               opacity: 1, 
-              x: 0, 
-              stagger: 0.038, 
-              duration: 0.38, 
-              ease: 'power2.out',
-              delay: 0.05,
+              scale: 1, 
+              filter: 'blur(0px)',
+              stagger: 0.045, 
+              duration: 0.42, 
+              ease: 'power3.out',
+              delay: 0.04,
               onComplete: () => { isAnimating = false; }
             }
           );
 
+          // Index numbering slide
+          gsap.fromTo('.mobile-nav-index',
+            { x: -10, opacity: 0 },
+            { x: 0, opacity: 1, stagger: 0.045, duration: 0.36, ease: 'power2.out', delay: 0.08 }
+          );
+
           // Icon spring punch
           gsap.fromTo('.mobile-nav-link .anim-icon', 
-            { scale: 0.5, rotate: -15 }, 
+            { scale: 0.3, rotate: -25, opacity: 0 }, 
             { 
               scale: 1, 
               rotate: 0, 
-              stagger: 0.038, 
-              duration: 0.45, 
+              opacity: 1,
+              stagger: 0.045, 
+              duration: 0.48, 
               ease: 'back.out(2)',
               delay: 0.08 
             }
+          );
+
+          // Label reveal
+          gsap.fromTo('.mobile-nav-label',
+            { x: -6, opacity: 0 },
+            { x: 0, opacity: 1, stagger: 0.045, duration: 0.38, ease: 'power2.out', delay: 0.1 }
+          );
+
+          // Arrow slide
+          gsap.fromTo('.mobile-nav-arrow',
+            { x: -8, opacity: 0 },
+            { x: 0, opacity: 1, stagger: 0.045, duration: 0.35, ease: 'power2.out', delay: 0.12 }
           );
         }
       } else {
@@ -158,9 +178,11 @@ class AnimationController {
 
           gsap.to(drawerLinks, {
             opacity: 0,
-            y: -8,
+            y: -10,
+            scale: 0.96,
+            filter: 'blur(4px)',
             stagger: 0.02,
-            duration: 0.16,
+            duration: 0.18,
             ease: 'power2.in'
           });
 
