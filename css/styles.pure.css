@@ -1750,39 +1750,11 @@ grid-template-columns:1fr!important
   }
 }
 
-#kinetic-world {
+#kinetic-canvas {
   position: fixed;
   inset: 0;
-  transform-style: preserve-3d;
-  perspective: 1000px;
+  width: 100vw;
+  height: 100vh;
   pointer-events: none;
   z-index: 1500;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.lyric-particle {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform-style: preserve-3d;
-  will-change: transform, opacity;
-  white-space: nowrap;
-  pointer-events: none;
-  font-family: 'Plus Jakarta Sans', var(--font-inter), sans-serif;
-  font-weight: 800;
-  font-size: 38px;
-  letter-spacing: -0.025em;
-  color: var(--color-pure-white);
-  text-shadow: 
-    0 0 24px var(--color-voltage-blue),
-    0 0 45px rgba(43, 127, 255, 0.45),
-    0 4px 14px rgba(0, 0, 0, 0.95),
-    -2px -2px 0 var(--color-obsidian),
-    2px -2px 0 var(--color-obsidian),
-    -2px 2px 0 var(--color-obsidian),
-    2px 2px 0 var(--color-obsidian);
-  z-index: 100;
 }

@@ -1,4 +1,4 @@
-// Kinetic Lyrics Engine for Double Life
+// WebGL / Three.js 3D Mesh Text Engine for Double Life
 const WORD_SYNCED_LYRICS = [
   { time: 2.02, text: "yeah", isAdlib: false },
   { time: 5.97, text: "yeah", isAdlib: false },
@@ -128,26 +128,105 @@ const QUEUE_DATA = WORD_SYNCED_LYRICS.map(item => ({
   isAdlib: !!item.isAdlib
 })).sort((a, b) => a.timestampMs - b.timestampMs);
 
-class BackgroundKineticEngine {
+class ThreeKineticEngine {
   constructor() {
-    this.world = document.getElementById('kinetic-world');
+    this.canvas = document.getElementById('kinetic-canvas');
     this.audio = document.getElementById('site-audio-element');
-    if (!this.world || !this.audio) return;
-    
+    if (!this.canvas || !this.audio || typeof THREE === 'undefined') return;
+
     this.lyricsQueue = QUEUE_DATA;
     this.currentIdx = 0;
     this.activeParticles = [];
+    this.loadedFont = null;
+
     this.playbackTimeMs = 0;
     this.lastAudioTime = 0;
     this.lastAudioPerf = performance.now();
 
-    this.audio.addEventListener('seeked', () => this.resync(this.audio.currentTime * 1000));
-    
+    this.initThree();
+    this.loadFont();
+    this.bindEvents();
     this.startLoop();
   }
 
+  initThree() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    // Scene
+    this.scene = new THREE.Scene();
+
+    // Camera (45deg FOV for natural 3D perspective)
+    this.camera = new THREE.PerspectiveCamera(45, width / height, 1, 2000);
+    this.camera.position.set(0, 0, 650);
+
+    // High-performance WebGL Renderer with transparency
+    this.renderer = new THREE.WebGLRenderer({
+      canvas: this.canvas,
+      alpha: true,
+      antialias: true,
+      powerPreference: 'high-performance'
+    });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setSize(width, height);
+    this.renderer.setClearColor(0x000000, 0);
+
+    // Lights
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    this.scene.add(this.ambientLight);
+
+    // Key directional light for bevel highlights
+    this.dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+    this.dirLight.position.set(150, 250, 300);
+    this.scene.add(this.dirLight);
+
+    // Voltage Blue accent rim light for vibrant edge reflections
+    this.bluePointLight = new THREE.PointLight(0x2b7fff, 4.0, 800);
+    this.bluePointLight.position.set(0, -50, 180);
+    this.scene.add(this.bluePointLight);
+  }
+
+  loadFont() {
+    const loader = new THREE.FontLoader();
+    loader.load(
+      'assets/fonts/helvetiker_bold.typeface.json',
+      (font) => {
+        this.loadedFont = font;
+      },
+      undefined,
+      (err) => {
+        console.warn('Local font load fallback:', err);
+        // Fallback to CDN if local font fails
+        loader.load('https://unpkg.com/three@0.128.0/examples/fonts/helvetiker_bold.typeface.json', (cdnFont) => {
+          this.loadedFont = cdnFont;
+        });
+      }
+    );
+  }
+
+  bindEvents() {
+    window.addEventListener('resize', () => this.onResize());
+    this.audio.addEventListener('seeked', () => this.resync(this.audio.currentTime * 1000));
+  }
+
+  onResize() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+    this.camera.aspect = width / height;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(width, height);
+  }
+
   resync(timeMs) {
-    this.activeParticles.forEach(p => p.el.remove());
+    this.activeParticles.forEach(p => {
+      this.scene.remove(p.mesh);
+      if (p.mesh.geometry) p.mesh.geometry.dispose();
+      if (Array.isArray(p.mesh.material)) {
+        p.mesh.material.forEach(m => m.dispose());
+      } else if (p.mesh.material) {
+        p.mesh.material.dispose();
+      }
+    });
     this.activeParticles = [];
     this.currentIdx = 0;
 
@@ -170,28 +249,90 @@ class BackgroundKineticEngine {
   }
 
   spawnParticle(text, spawnTimeMs, durationMs, isAdlib = false) {
-    if (!text || !text.trim()) return;
+    if (!text || !text.trim() || !this.loadedFont) return;
 
+    // Keep active 3D meshes performant (max 4 on screen)
     while (this.activeParticles.length >= 4) {
       const oldest = this.activeParticles.shift();
-      oldest.el.remove();
+      this.scene.remove(oldest.mesh);
+      if (oldest.mesh.geometry) oldest.mesh.geometry.dispose();
+      if (Array.isArray(oldest.mesh.material)) {
+        oldest.mesh.material.forEach(m => m.dispose());
+      }
     }
 
-    const maxW = window.innerWidth * 0.35;
-    const maxH = window.innerHeight * 0.35;
-    const posX = (Math.random() * 2 - 1) * maxW;
-    const posY = (Math.random() * 2 - 1) * maxH - 80;
-    const posZ = (Math.random() * 2 - 1) * 150 - 50;
-    const tilt = (Math.random() * 2 - 1) * 12;
+    // Adaptive font size based on screen width
+    const isMobile = window.innerWidth < 640;
+    const fontSize = isMobile ? 22 : (text.length > 20 ? 24 : 30);
+    const extrudeDepth = isMobile ? 4 : 6;
 
-    const el = document.createElement('div');
-    el.className = 'lyric-particle';
-    el.textContent = text;
-    this.world.appendChild(el);
+    // 3D Extruded Geometry with Smooth Bevels
+    const geometry = new THREE.TextGeometry(text, {
+      font: this.loadedFont,
+      size: fontSize,
+      height: extrudeDepth,
+      curveSegments: 4,
+      bevelEnabled: true,
+      bevelThickness: 1.4,
+      bevelSize: 0.9,
+      bevelOffset: 0,
+      bevelSegments: 3
+    });
+
+    geometry.computeBoundingBox();
+    geometry.center(); // Center rotation and positioning around origin
+
+    // Multi-material: Front face is crisp Bone/White, Sides/Bevels have dark metallic depth
+    const frontMat = new THREE.MeshStandardMaterial({
+      color: 0xffffff,
+      roughness: 0.25,
+      metalness: 0.45,
+      transparent: true,
+      opacity: 0
+    });
+
+    const sideMat = new THREE.MeshStandardMaterial({
+      color: 0x1a2130,
+      roughness: 0.35,
+      metalness: 0.8,
+      emissive: 0x071530,
+      transparent: true,
+      opacity: 0
+    });
+
+    const mesh = new THREE.Mesh(geometry, [frontMat, sideMat]);
+
+    // Random 3D World Positioning
+    const boundsX = isMobile ? 120 : 220;
+    const boundsY = isMobile ? 140 : 160;
+    const startX = (Math.random() * 2 - 1) * boundsX;
+    const startY = (Math.random() * 2 - 1) * boundsY - 20;
+    const startZ = (Math.random() * 2 - 1) * 80 - 40;
+
+    const baseRotX = (Math.random() * 2 - 1) * 0.18;
+    const baseRotY = (Math.random() * 2 - 1) * 0.25;
+    const baseRotZ = (Math.random() * 2 - 1) * 0.08;
+
+    mesh.position.set(startX, startY, startZ);
+    mesh.rotation.set(baseRotX, baseRotY, baseRotZ);
+    mesh.scale.set(0.1, 0.1, 0.1);
+
+    this.scene.add(mesh);
 
     this.activeParticles.push({
-      el, text, posX, posY, posZ, tilt, spawnTimeMs, durationMs,
-      floatHeight: 40 + Math.random() * 25
+      mesh,
+      spawnTimeMs,
+      durationMs,
+      startX,
+      startY,
+      startZ,
+      baseRotX,
+      baseRotY,
+      baseRotZ,
+      floatSpeedY: 20 + Math.random() * 15,
+      floatSpeedX: (Math.random() - 0.5) * 10,
+      frontMat,
+      sideMat
     });
   }
 
@@ -215,6 +356,7 @@ class BackgroundKineticEngine {
     const tick = () => {
       const now = Date.now();
 
+      // Check lyrics timeline if audio is playing
       if (!this.audio.paused) {
         this.playbackTimeMs = this.getExactTimeMs();
         const leadTimeMs = this.playbackTimeMs + 40;
@@ -236,12 +378,16 @@ class BackgroundKineticEngine {
         }
       }
 
+      // Animate active 3D Text Meshes
       for (let i = this.activeParticles.length - 1; i >= 0; i--) {
         const p = this.activeParticles[i];
         const elapsed = now - p.spawnTimeMs;
 
         if (elapsed >= p.durationMs) {
-          p.el.remove();
+          this.scene.remove(p.mesh);
+          if (p.mesh.geometry) p.mesh.geometry.dispose();
+          p.frontMat.dispose();
+          p.sideMat.dispose();
           this.activeParticles.splice(i, 1);
           continue;
         }
@@ -249,24 +395,40 @@ class BackgroundKineticEngine {
         const progress = Math.max(0, Math.min(1, elapsed / p.durationMs));
         let alpha = 1;
         let scale = 1;
-        let offsetY = 0;
 
         if (progress < 0.15) {
+          // Entrance cubic-out with scale bounce
           const t = progress / 0.15;
           alpha = 1 - Math.pow(1 - t, 3);
-          offsetY = 22 * (1 - alpha);
-          scale = 0.92 + 0.08 * (1 + 2.7 * Math.pow(t - 1, 3) + 1.7 * Math.pow(t - 1, 2));
-        } else {
-          offsetY = -progress * p.floatHeight * 0.3;
-          if (progress > 0.75) {
-            const t = (progress - 0.75) / 0.25;
-            alpha = 1 - Math.pow(t, 3);
-            scale = 1 - 0.03 * t;
-          }
+          scale = 0.5 + 0.5 * (1 + 1.8 * Math.pow(t - 1, 3) + 1.2 * Math.pow(t - 1, 2));
+        } else if (progress > 0.80) {
+          // Exit fade out
+          const t = (progress - 0.80) / 0.20;
+          alpha = 1 - Math.pow(t, 2);
+          scale = 1 - 0.05 * t;
         }
 
-        p.el.style.opacity = Math.max(0, Math.min(1, alpha));
-        p.el.style.transform = `translate(-50%, -50%) translate3d(${p.posX}px, ${p.posY + offsetY}px, ${p.posZ}px) rotate(${p.tilt}deg) scale(${scale})`;
+        // Apply smooth 3D transform & floating drift
+        const currentY = p.startY + progress * p.floatSpeedY;
+        const currentX = p.startX + Math.sin(progress * Math.PI) * p.floatSpeedX;
+        const currentZ = p.startZ + progress * 15;
+
+        p.mesh.position.set(currentX, currentY, currentZ);
+        p.mesh.rotation.set(
+          p.baseRotX + Math.sin(progress * 2) * 0.04,
+          p.baseRotY + Math.cos(progress * 2) * 0.05,
+          p.baseRotZ
+        );
+        p.mesh.scale.set(scale, scale, scale);
+
+        // Apply material opacity
+        p.frontMat.opacity = Math.max(0, Math.min(1, alpha));
+        p.sideMat.opacity = Math.max(0, Math.min(1, alpha * 0.95));
+      }
+
+      // Render Three.js Scene
+      if (this.renderer && this.scene && this.camera) {
+        this.renderer.render(this.scene, this.camera);
       }
 
       requestAnimationFrame(tick);
@@ -277,5 +439,5 @@ class BackgroundKineticEngine {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  window.bgKineticEngine = new BackgroundKineticEngine();
+  window.threeKineticEngine = new ThreeKineticEngine();
 });
