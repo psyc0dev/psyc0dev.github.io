@@ -261,10 +261,10 @@ class ThreeKineticEngine {
       }
     }
 
-    // Adaptive font size based on screen width
+    // Adaptive font size based on screen width (compact & refined)
     const isMobile = window.innerWidth < 640;
-    const fontSize = isMobile ? 22 : (text.length > 20 ? 24 : 30);
-    const extrudeDepth = isMobile ? 4 : 6;
+    const fontSize = isMobile ? 13 : (text.length > 20 ? 15 : (text.length > 12 ? 17 : 20));
+    const extrudeDepth = isMobile ? 2.5 : 3.5;
 
     // 3D Extruded Geometry with Smooth Bevels
     const geometry = new THREE.TextGeometry(text, {
@@ -273,8 +273,8 @@ class ThreeKineticEngine {
       height: extrudeDepth,
       curveSegments: 4,
       bevelEnabled: true,
-      bevelThickness: 1.4,
-      bevelSize: 0.9,
+      bevelThickness: 0.7,
+      bevelSize: 0.5,
       bevelOffset: 0,
       bevelSegments: 3
     });
