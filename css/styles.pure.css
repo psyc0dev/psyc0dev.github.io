@@ -628,7 +628,7 @@ height:auto;
 border-radius:var(--radius-cards)
 }
 
-.cube-photo {
+.art-photo {
 width:256px;
 max-width:58%;
 height:auto;
@@ -1451,7 +1451,7 @@ width:250px!important;
 max-width:62%!important
 }
 
-.cube-photo {
+.art-photo {
 width:250px!important;
 max-width:62%!important
 }
