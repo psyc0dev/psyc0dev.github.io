@@ -1,21 +1,10 @@
-/**
- * Altitude / psyc0dev — Language Switcher (EN / RU)
- *
- * The English copy lives in the HTML. On first run we capture every
- * translatable node's original content, so switching back to EN is a restore.
- * RU translations are applied by selector:
- *   { s, h }  → swap innerHTML
- *   { s, t }  → swap only the element's last non-empty text node (keeps icons)
- *   { s, ph } → swap the placeholder attribute
- * The choice persists in localStorage; first visit follows the browser language.
- */
+
 (function () {
   const STORAGE_KEY = 'psyc0dev-lang';
   const TITLES = { en: 'psyc0dev | Portfolio', ru: 'psyc0dev | Портфолио' };
 
-  // prettier-ignore
   const RU = [
-    // Navigation (desktop + drawer + footer + hero CTA)
+
     { s: '.nav-links a[href="#focus"]', t: 'Что я делаю' },
     { s: '.nav-links a[href="#projects"]', t: 'Проекты' },
     { s: '.nav-links a[href="#stack"]', t: 'Стек' },
@@ -35,11 +24,9 @@
     { s: '.footer-col a[href="#about"]', t: 'Обо мне' },
     { s: '.footer-col a[href="#contact"]', t: 'Контакты' },
 
-    // Hero
     { s: '.hero-headline', h: 'Привет, я psyc0dev. Делаю быстрый и точный софт для веба и десктопа.' },
     { s: '.hero-subhead', h: 'Мои проекты: кроссплатформенные десктоп-приложения на <strong>Tauri</strong> и <strong>Rust</strong>, фулстек-веб-платформы на <strong>TypeScript</strong> и <strong>Vite</strong>, а ещё Telegram-боты и бэкенды под них.' },
 
-    // What I Do
     { s: '#focus .section-title', h: 'Что я делаю' },
     { s: '#focus .section-subhead', h: 'Я собираю десктоп-приложения и веб-платформы, пишу ботов и разбираюсь в системах, которые за ними стоят.' },
     { s: '#focus .workflow-tile:nth-child(1) .workflow-tile-label', t: 'Веб-приложения и платформы' },
@@ -48,7 +35,6 @@
     { s: '#focus .workflow-tile:nth-child(4) .workflow-tile-label', t: 'API и бэкенд-системы' },
     { s: '#focus .workflow-tile:nth-child(5) .workflow-tile-label', t: 'Производительность и системная разработка' },
 
-    // Projects
     { s: '#projects .section-title', h: 'Избранные проекты' },
     { s: '#projects .section-subhead', h: 'Это проекты, которые я выпустил. Каждая карточка ведёт в репозиторий на GitHub.' },
     { s: '#projects .project-card:nth-of-type(1) .project-card-header .project-tag', t: 'ДЕСКТОП + ВЕБ' },
@@ -66,7 +52,6 @@
     { s: 'a.project-link-btn[target="_blank"]', t: 'Исходники' },
     { s: 'a.project-link-btn[href="#stack"]', t: 'Смотреть стек' },
 
-    // Tech Stack
     { s: '#stack .section-title', h: 'Технологии' },
     { s: '#stack .section-subhead', h: 'Языки, фреймворки и инструменты, которые я использую, и насколько я в каждом уверен.' },
     { s: '.data-table thead th:nth-child(1)', t: 'Домен' },
@@ -89,7 +74,6 @@
     { s: '.data-table tbody tr:nth-child(4) td:nth-child(4) .project-tag', t: 'КАЖДЫЙ ДЕНЬ' },
     { s: '.data-table tbody tr:nth-child(5) td:nth-child(4) .project-tag', t: 'УВЕРЕННО' },
 
-    // About
     { s: '#about .section-title', h: 'Обо мне' },
     { s: '#about .section-subhead', h: 'Почему этот сайт выглядит именно так.' },
     { s: '#about .feature-lead:nth-of-type(1)', h: 'Большинство проектов я делаю, потому что хочу сделать жизнь людей лучше, и воссоздаю миниигры и плагины из детства. Скоро могу выложить исходники <span class="hover-preview" tabindex="0">CS2-чита<img class="hover-preview-img" src="assets/menu.png" alt="" loading="lazy" /></span>, написанного в этом году.' },
@@ -101,7 +85,6 @@
     { s: '#about .form-card .font-mono div:nth-child(4)', h: '<span class="text-voltage">ЛИЦЕНЗИЯ:</span> MIT, код открыт' },
     { s: '#about .form-card .font-mono div:nth-child(5)', h: '<span class="text-voltage">СТАТУС:</span> открыт к интересным проектам' },
 
-    // Contact
     { s: '#contact .section-title', h: 'Контакты' },
     { s: '#contact .section-subhead', h: 'Хотите начать проект или поболтать? Пишите на почту.' },
     { s: '#contact .feature-copy .feature-lead', h: 'Расскажите про веб-приложение, десктоп-тул или системную задачу, которую нужно решить. Лучше всего через Telegram. Форма приходит на Телеграм.' },
@@ -114,7 +97,6 @@
     { s: '#contact-message', ph: 'Расскажите о проекте, сроках или идее...' },
     { s: '#contact-form button span', t: 'Отправить' },
 
-    // Footer
     { s: '.footer-cols .footer-col:nth-child(1) .sidebar-label', t: 'РАЗДЕЛЫ' },
     { s: '.footer-cols .footer-col:nth-child(2) .sidebar-label', t: 'ПРОЧЕЕ' },
     { s: '.footer-bottom > span', h: '© 2026 <strong>psyc0dev</strong>. <span class="footer-hand">Спроектировано и собрано вручную, без фреймворков.</span> <span class="footer-mit">Лицензия MIT</span>' },
@@ -139,7 +121,7 @@
   }
 
   function swapText(el, text) {
-    // Replace only the last non-empty text node so icons/spans survive.
+
     const nodes = Array.from(el.childNodes).filter(
       (n) => n.nodeType === 3 && n.textContent.trim()
     );
@@ -188,7 +170,6 @@
 
     animating = true;
 
-    // Reduced motion: a quiet opacity crossfade, no movement.
     if (reduced) {
       gsap.to(list, {
         opacity: 0,
@@ -210,7 +191,6 @@
       return;
     }
 
-    // Full cascade: fade down, swap, fade up with a stagger.
     gsap.to(list, {
       opacity: 0,
       y: 12,
@@ -254,7 +234,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, lang);
     } catch (e) {
-      /* private mode */
+
     }
 
     if (animate) animateTextSwap(lang);
@@ -272,7 +252,7 @@
     try {
       saved = localStorage.getItem(STORAGE_KEY);
     } catch (e) {
-      /* private mode */
+
     }
     const initial =
       saved === 'ru' || saved === 'en'

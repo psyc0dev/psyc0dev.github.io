@@ -1,16 +1,11 @@
-/**
- * Altitude / psyc0dev — Main Application Orchestrator
- * Bootstraps GSAP animations, Lucide icons, and interactive filters.
- */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // 1. Initialize GSAP & Lucide Animations
+
   let animations = null;
   if (typeof AnimationController !== 'undefined') {
     animations = new AnimationController();
   }
 
-  // 2. Project Filtering Chips
   const filterPills = document.querySelectorAll('.project-filter-pill');
   const projectCards = document.querySelectorAll('.project-card');
 
@@ -35,9 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // 3. Contact Form Handler
-  // Paste your deployed worker URL here (see cloudflare-worker/README.md).
-  // While it is empty, submitting the form opens the visitor's mail client.
   const CONTACT_ENDPOINT = 'https://psyc0dev-contact.psyc0dev.workers.dev/submit';
 
   const contactForm = document.getElementById('contact-form');
@@ -69,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       try {
         if (!CONTACT_ENDPOINT) {
-          // No worker configured yet: hand the message to the mail client.
+
           const tg = payload.telegram ? '\nTelegram: @' + payload.telegram : '';
           const subject = encodeURIComponent('Portfolio message from ' + payload.name);
           const body = encodeURIComponent(
@@ -101,7 +93,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 4. CS2 cheat preview: tap toggle (touch) + outside/Escape close
   const cs2Preview = document.querySelector('.hover-preview');
   if (cs2Preview) {
     cs2Preview.addEventListener('click', (e) => {
@@ -115,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') cs2Preview.classList.remove('tapped');
     });
-    // if menu.png is missing, hide the hover affordance entirely
+
     document.addEventListener(
       'error',
       (e) => {

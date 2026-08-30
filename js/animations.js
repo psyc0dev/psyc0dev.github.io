@@ -1,7 +1,3 @@
-/**
- * Altitude / psyc0dev — GSAP Timelines, ScrollTriggers & Lucide Micro-Animations
- * Midnight Financial Editorial Motion System with Dynamic Navbar Scrollspy
- */
 
 class AnimationController {
   constructor() {
@@ -31,12 +27,10 @@ class AnimationController {
     brandLogo.addEventListener('click', (e) => {
       e.preventDefault();
 
-      // 1. Reset URL to default without hash fragment
       if (window.location.hash) {
         history.pushState('', document.title, window.location.pathname + window.location.search);
       }
 
-      // 2. Close mobile drawer if open
       const drawer = document.getElementById('mobile-nav-drawer');
       const toggleBtn = document.getElementById('mobile-menu-toggle');
       if (drawer && drawer.classList.contains('open')) {
@@ -52,7 +46,6 @@ class AnimationController {
         }
       }
 
-      // 3. Smooth scroll to the top of the page
       if (this.lenis) {
         this.lenis.scrollTo(0, {
           duration: 1.15,
@@ -65,17 +58,15 @@ class AnimationController {
         });
       }
 
-      // 4. Reset active nav links
       document.querySelectorAll('.nav-link, .mobile-nav-link').forEach(link => {
         link.classList.remove('active');
       });
 
-      // 5. Interactive brand glyph micro-animation
       if (typeof gsap !== 'undefined') {
         const glyph = brandLogo.querySelector('.brand-avatar, .brand-glyph, svg');
         if (glyph) {
-          gsap.fromTo(glyph, 
-            { rotate: 0, scale: 0.8 }, 
+          gsap.fromTo(glyph,
+            { rotate: 0, scale: 0.8 },
             { rotate: 360, scale: 1.1, duration: 0.7, ease: 'back.out(2)', onComplete: () => {
               gsap.to(glyph, { scale: 1, duration: 0.2 });
             }}
@@ -99,10 +90,10 @@ class AnimationController {
       if (isAnimating && open === undefined) return;
 
       toggleBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-      
+
       if (typeof lucide !== 'undefined') {
-        toggleBtn.innerHTML = isOpen 
-          ? `<i data-lucide="x" class="anim-icon" style="width: 20px; height: 20px;"></i>` 
+        toggleBtn.innerHTML = isOpen
+          ? `<i data-lucide="x" class="anim-icon" style="width: 20px; height: 20px;"></i>`
           : `<i data-lucide="menu" class="anim-icon" style="width: 20px; height: 20px;"></i>`;
         lucide.createIcons();
       }
@@ -116,55 +107,49 @@ class AnimationController {
           isAnimating = true;
           gsap.killTweensOf([drawer, drawerLinks, '.mobile-nav-index', '.mobile-nav-link .anim-icon', '.mobile-nav-label', '.mobile-nav-arrow']);
 
-          // Drawer slide and glass fade
-          gsap.fromTo(drawer, 
-            { y: -20, opacity: 0 }, 
+          gsap.fromTo(drawer,
+            { y: -20, opacity: 0 },
             { y: 0, opacity: 1, duration: 0.35, ease: 'power3.out' }
           );
 
-          // Staggered luxury card tab slide-in with scale & blur
-          gsap.fromTo(drawerLinks, 
-            { y: 26, opacity: 0, scale: 0.94, filter: 'blur(6px)' }, 
-            { 
-              y: 0, 
-              opacity: 1, 
-              scale: 1, 
+          gsap.fromTo(drawerLinks,
+            { y: 26, opacity: 0, scale: 0.94, filter: 'blur(6px)' },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
               filter: 'blur(0px)',
-              stagger: 0.045, 
-              duration: 0.42, 
+              stagger: 0.045,
+              duration: 0.42,
               ease: 'power3.out',
               delay: 0.04,
               onComplete: () => { isAnimating = false; }
             }
           );
 
-          // Index numbering slide
           gsap.fromTo('.mobile-nav-index',
             { x: -10, opacity: 0 },
             { x: 0, opacity: 1, stagger: 0.045, duration: 0.36, ease: 'power2.out', delay: 0.08 }
           );
 
-          // Icon spring punch
-          gsap.fromTo('.mobile-nav-link .anim-icon', 
-            { scale: 0.3, rotate: -25, opacity: 0 }, 
-            { 
-              scale: 1, 
-              rotate: 0, 
+          gsap.fromTo('.mobile-nav-link .anim-icon',
+            { scale: 0.3, rotate: -25, opacity: 0 },
+            {
+              scale: 1,
+              rotate: 0,
               opacity: 1,
-              stagger: 0.045, 
-              duration: 0.48, 
+              stagger: 0.045,
+              duration: 0.48,
               ease: 'back.out(2)',
-              delay: 0.08 
+              delay: 0.08
             }
           );
 
-          // Label reveal
           gsap.fromTo('.mobile-nav-label',
             { x: -6, opacity: 0 },
             { x: 0, opacity: 1, stagger: 0.045, duration: 0.38, ease: 'power2.out', delay: 0.1 }
           );
 
-          // Arrow slide
           gsap.fromTo('.mobile-nav-arrow',
             { x: -8, opacity: 0 },
             { x: 0, opacity: 1, stagger: 0.045, duration: 0.35, ease: 'power2.out', delay: 0.12 }
@@ -223,7 +208,6 @@ class AnimationController {
       });
     });
 
-    // Close drawer on click outside
     document.addEventListener('click', (e) => {
       if (drawer.classList.contains('open') && !drawer.contains(e.target) && !toggleBtn.contains(e.target)) {
         toggleDrawer(false);
@@ -247,7 +231,6 @@ class AnimationController {
       });
     }
 
-    // Section transition animation
     if (typeof gsap !== 'undefined') {
       const sectionTitle = target.querySelector('.section-title, .hero-headline, h2, h1');
       if (sectionTitle) {
@@ -273,7 +256,6 @@ class AnimationController {
       infinite: false
     });
 
-    // Synchronize Lenis with GSAP ScrollTrigger
     if (typeof ScrollTrigger !== 'undefined') {
       this.lenis.on('scroll', ScrollTrigger.update);
       gsap.ticker.add((time) => {
@@ -288,7 +270,6 @@ class AnimationController {
       requestAnimationFrame(raf);
     }
 
-    // Intercept all internal anchor links for buttery-smooth Lenis scroll
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
       anchor.addEventListener('click', (e) => {
         const href = anchor.getAttribute('href');
@@ -306,7 +287,6 @@ class AnimationController {
       });
     });
 
-    // Footer back-to-top (fixed header can't be a scroll target, so scroll to 0 directly)
     document.querySelectorAll('.back-to-top').forEach(link => {
       link.addEventListener('click', (e) => {
         e.preventDefault();
@@ -342,10 +322,8 @@ class AnimationController {
       window.scrollTo(0, 0);
       if (this.lenis) this.lenis.scrollTo(0, { immediate: true });
 
-      // 1. Initialize component entrance immediately so initial state is hidden before reveal
       if (onComplete) onComplete();
 
-      // 2. Remove is-loading so page becomes visible in animated state
       document.body.classList.remove('is-loading');
 
       if (typeof gsap !== 'undefined') {
@@ -379,7 +357,7 @@ class AnimationController {
     };
 
     if (player) {
-      // Listen for the animation complete event
+
       player.addEventListener('complete', () => {
         finishLoading();
       });
@@ -391,7 +369,7 @@ class AnimationController {
             lottie.addEventListener('complete', finishLoading);
           }
         } catch (err) {
-          // ignore
+
         }
       });
     }
@@ -402,31 +380,30 @@ class AnimationController {
 
     gsap.killTweensOf(['.top-nav', '.hero-headline', '.hero-subhead', '.hero-cta-group > *', '.mountain-ridge-container']);
 
-    // Hero Entrance Timeline
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
 
-    tl.fromTo('.top-nav', 
-      { y: -30, opacity: 0 }, 
+    tl.fromTo('.top-nav',
+      { y: -30, opacity: 0 },
       { y: 0, opacity: 1, duration: 0.7 }
     )
-    .fromTo('.hero-headline', 
-      { y: 35, opacity: 0 }, 
-      { y: 0, opacity: 1, duration: 0.85, ease: 'power4.out' }, 
+    .fromTo('.hero-headline',
+      { y: 35, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.85, ease: 'power4.out' },
       '-=0.35'
     )
-    .fromTo('.hero-subhead', 
-      { y: 20, opacity: 0 }, 
-      { y: 0, opacity: 1, duration: 0.7 }, 
+    .fromTo('.hero-subhead',
+      { y: 20, opacity: 0 },
+      { y: 0, opacity: 1, duration: 0.7 },
       '-=0.45'
     )
-    .fromTo('.hero-cta-group > *', 
-      { y: 16, opacity: 0 }, 
-      { y: 0, opacity: 1, stagger: 0.12, duration: 0.55 }, 
+    .fromTo('.hero-cta-group > *',
+      { y: 16, opacity: 0 },
+      { y: 0, opacity: 1, stagger: 0.12, duration: 0.55 },
       '-=0.35'
     )
-    .fromTo('.mountain-ridge-container', 
-      { opacity: 0, y: 15 }, 
-      { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' }, 
+    .fromTo('.mountain-ridge-container',
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power2.out' },
       '-=0.35'
     );
   }
@@ -437,7 +414,6 @@ class AnimationController {
     if (typeof ScrollTrigger !== 'undefined') {
       gsap.registerPlugin(ScrollTrigger);
 
-      // Workflow Tiles Stagger
       gsap.from('.workflow-tile', {
         scrollTrigger: {
           trigger: '.workflow-grid',
@@ -450,7 +426,6 @@ class AnimationController {
         ease: 'power3.out'
       });
 
-      // Project Specimen Cards Stagger
       gsap.from('.project-card', {
         scrollTrigger: {
           trigger: '.projects-grid',
@@ -463,7 +438,6 @@ class AnimationController {
         ease: 'power3.out'
       });
 
-      // Data Table Container reveal
       gsap.from('.data-table-container', {
         scrollTrigger: {
           trigger: '.data-table-container',
@@ -485,7 +459,6 @@ class AnimationController {
     const onScroll = () => {
       const scrollY = window.scrollY;
 
-      // 1. Dynamic navbar background & shadow on scroll
       if (nav) {
         if (scrollY > 20) {
           nav.classList.add('scrolled');
@@ -494,7 +467,6 @@ class AnimationController {
         }
       }
 
-      // 2. Highlight active nav link based on scroll position
       let currentSectionId = '';
       sections.forEach(section => {
         const rect = section.getBoundingClientRect();
@@ -520,7 +492,7 @@ class AnimationController {
           }
         });
       } else {
-        // At the hero (before any section) nothing in the nav is highlighted.
+
         navLinks.forEach(link => link.classList.remove('active'));
         document.querySelectorAll('.mobile-nav-link').forEach(mLink => mLink.classList.remove('active'));
       }
@@ -529,7 +501,6 @@ class AnimationController {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
 
-    // Smooth scroll and immediate active state on click
     navLinks.forEach(link => {
       link.addEventListener('click', (e) => {
         const href = link.getAttribute('href');

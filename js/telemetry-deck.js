@@ -1,9 +1,3 @@
-/**
- * Altitude / psyc0dev — Telemetry Operations Deck
- * Real-time 60FPS dual-channel oscillograph, distributed node topology laser network,
- * live deterministic eBPF kernel syslog stream, and dynamic KPI monitors.
- * Built with vanilla Canvas 2D & requestAnimationFrame (Zero external dependencies).
- */
 
 class TelemetryOperationsDeck {
   constructor(canvasId = 'telemetry-oscilloscope-canvas', topologyCanvasId = 'telemetry-topology-canvas') {
@@ -60,7 +54,7 @@ class TelemetryOperationsDeck {
   }
 
   bindEvents() {
-    // Stream mode selector buttons
+
     document.querySelectorAll('.telemetry-stream-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('.telemetry-stream-btn').forEach(b => b.classList.remove('active'));
@@ -70,19 +64,17 @@ class TelemetryOperationsDeck {
       });
     });
 
-    // Play/Pause button
     const toggleBtn = document.getElementById('telemetry-toggle-play');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
         this.isPlaying = !this.isPlaying;
-        toggleBtn.innerHTML = this.isPlaying 
-          ? `<i data-lucide="pause" style="width: 13px; height: 13px;"></i><span>Pause Stream</span>` 
+        toggleBtn.innerHTML = this.isPlaying
+          ? `<i data-lucide="pause" style="width: 13px; height: 13px;"></i><span>Pause Stream</span>`
           : `<i data-lucide="play" style="width: 13px; height: 13px;"></i><span>Resume Stream</span>`;
         if (typeof lucide !== 'undefined') lucide.createIcons();
       });
     }
 
-    // Load Spike Simulation button
     const injectBtn = document.getElementById('telemetry-inject-spike');
     if (injectBtn) {
       injectBtn.addEventListener('click', () => {
@@ -92,7 +84,6 @@ class TelemetryOperationsDeck {
       });
     }
 
-    // Interactive Node Click on Topology Canvas
     if (this.topCanvas) {
       this.topCanvas.addEventListener('click', (e) => {
         const rect = this.topCanvas.getBoundingClientRect();
@@ -153,7 +144,6 @@ class TelemetryOperationsDeck {
 
       this.time += 0.035;
 
-      // 1. Draw Oscilloscope Waveforms
       if (this.oscCanvas) {
         const ctx = this.oscCanvas.getContext('2d');
         const rect = this.oscCanvas.getBoundingClientRect();
@@ -162,7 +152,6 @@ class TelemetryOperationsDeck {
 
         ctx.clearRect(0, 0, w, h);
 
-        // Draw Subtle Grid
         ctx.strokeStyle = 'rgba(38, 38, 38, 0.6)';
         ctx.lineWidth = 1;
         const gridStep = 24;
@@ -177,7 +166,6 @@ class TelemetryOperationsDeck {
         }
         ctx.stroke();
 
-        // Channel A: Voltage Blue Waveform (Packet Latency)
         ctx.strokeStyle = '#2b7fff';
         ctx.lineWidth = 1.75;
         ctx.shadowColor = 'rgba(43, 127, 255, 0.45)';
@@ -195,7 +183,6 @@ class TelemetryOperationsDeck {
         }
         ctx.stroke();
 
-        // Channel B: Fog Waveform (Ring Buffer Saturation)
         ctx.strokeStyle = 'rgba(164, 161, 155, 0.4)';
         ctx.lineWidth = 1;
         ctx.shadowBlur = 0;
@@ -210,7 +197,6 @@ class TelemetryOperationsDeck {
         ctx.stroke();
       }
 
-      // 2. Draw Distributed Topology Canvas
       if (this.topCanvas) {
         const ctx = this.topCanvas.getContext('2d');
         const rect = this.topCanvas.getBoundingClientRect();
@@ -219,7 +205,6 @@ class TelemetryOperationsDeck {
 
         ctx.clearRect(0, 0, w, h);
 
-        // Draw Interconnection Network Lines
         ctx.strokeStyle = 'rgba(50, 50, 50, 0.8)';
         ctx.lineWidth = 1;
         ctx.setLineDash([4, 4]);
@@ -234,7 +219,6 @@ class TelemetryOperationsDeck {
         }
         ctx.setLineDash([]);
 
-        // Periodically spawn random packets
         if (Math.random() < 0.035) {
           const from = Math.floor(Math.random() * this.nodes.length);
           let to = Math.floor(Math.random() * this.nodes.length);
@@ -242,7 +226,6 @@ class TelemetryOperationsDeck {
           this.sendPacket(from, to);
         }
 
-        // Draw and update packets in flight
         for (let i = this.packetsInFlight.length - 1; i >= 0; i--) {
           const p = this.packetsInFlight[i];
           p.progress += p.speed;
@@ -266,20 +249,17 @@ class TelemetryOperationsDeck {
           }
         }
 
-        // Draw Nodes
         this.nodes.forEach((node, idx) => {
           const nx = node.x * w;
           const ny = node.y * h;
           const isActive = idx === this.activeNodeIndex;
 
-          // Pulse Aura
           const pulse = Math.sin(this.time * 3 + idx) * 3;
           ctx.fillStyle = isActive ? 'rgba(43, 127, 255, 0.2)' : 'rgba(38, 38, 38, 0.5)';
           ctx.beginPath();
           ctx.arc(nx, ny, 16 + pulse, 0, Math.PI * 2);
           ctx.fill();
 
-          // Node Circle
           ctx.fillStyle = isActive ? '#2b7fff' : '#1f1f1f';
           ctx.strokeStyle = isActive ? '#eeeeee' : '#323232';
           ctx.lineWidth = 1.5;
@@ -288,7 +268,6 @@ class TelemetryOperationsDeck {
           ctx.fill();
           ctx.stroke();
 
-          // Node Text Label
           ctx.fillStyle = isActive ? '#eeeeee' : '#a4a19b';
           ctx.font = '10px "Fira Code", monospace';
           ctx.textAlign = 'center';
@@ -328,7 +307,6 @@ class TelemetryOperationsDeck {
     line.innerHTML = htmlText;
     this.streamLogEl.appendChild(line);
 
-    // Keep max 60 lines
     while (this.streamLogEl.children.length > 60) {
       this.streamLogEl.removeChild(this.streamLogEl.firstChild);
     }

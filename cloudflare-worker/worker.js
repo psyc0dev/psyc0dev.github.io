@@ -1,24 +1,9 @@
-/**
- * psyc0dev — Contact form worker.
- *
- * Receives the portfolio contact form as JSON and forwards it to the
- * psyc0dev Telegram bot.
- *
- * Secrets (set with `npx wrangler secret put <NAME>` or bunx):
- *   TELEGRAM_BOT_TOKEN - bot token from @BotFather
- *   TELEGRAM_CHAT_ID   - your chat id with that bot
- * Optional:
- *   ALLOWED_ORIGIN - comma-separated origin list (default: *)
- *
- * See README.md for setup.
- */
 
 const JSON_HEADERS = { 'Content-Type': 'application/json' };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const RATE_LIMIT = 5;
-const RATE_WINDOW = 10 * 60 * 1000; // 10 minutes
+const RATE_WINDOW = 10 * 60 * 1000;
 
-// Per-isolate memory: resets now and then, but stops the laziest spam bursts.
 const hits = new Map();
 
 function isRateLimited(ip) {
@@ -142,7 +127,6 @@ export default {
       data = null;
     }
 
-    // Honeypot field must stay empty; bots fill it, humans never see it.
     if (!data || typeof data !== 'object' || data._gotcha) {
       return json({ ok: false, error: 'Invalid submission' }, 400, request, env);
     }

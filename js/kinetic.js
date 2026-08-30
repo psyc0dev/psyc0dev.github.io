@@ -1,4 +1,4 @@
-// WebGL / Three.js 3D Mesh Text Engine for Double Life (Cross-Device & Mobile-Optimized)
+
 const WORD_SYNCED_LYRICS = [
   { time: 2.02, text: "yeah", isAdlib: false },
   { time: 5.97, text: "yeah", isAdlib: false },
@@ -154,15 +154,12 @@ class ThreeKineticEngine {
     const height = window.innerHeight;
     const isMobile = width < 640;
 
-    // Scene
     this.scene = new THREE.Scene();
 
-    // Camera (Adaptive FOV for narrow mobile screens)
-    const fov = isMobile ? 52 : 45;
+    const fov = isMobile ? 50 : 45;
     this.camera = new THREE.PerspectiveCamera(fov, width / height, 1, 2500);
-    this.camera.position.set(0, 0, isMobile ? 620 : 650);
+    this.camera.position.set(0, 0, isMobile ? 580 : 620);
 
-    // High-performance WebGL Renderer with transparency
     this.renderer = new THREE.WebGLRenderer({
       canvas: this.canvas,
       alpha: true,
@@ -173,18 +170,19 @@ class ThreeKineticEngine {
     this.renderer.setSize(width, height);
     this.renderer.setClearColor(0x000000, 0);
 
-    // Lights
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.95);
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     this.scene.add(this.ambientLight);
 
-    // Key directional light for bevel highlights
-    this.dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    this.dirLight.position.set(150, 250, 300);
-    this.scene.add(this.dirLight);
+    this.rightKeyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    this.rightKeyLight.position.set(280, 280, 360);
+    this.scene.add(this.rightKeyLight);
 
-    // Voltage Blue accent rim light for vibrant edge reflections
-    this.bluePointLight = new THREE.PointLight(0x2b7fff, 4.2, 900);
-    this.bluePointLight.position.set(0, -30, 200);
+    this.leftKeyLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    this.leftKeyLight.position.set(-280, 280, 360);
+    this.scene.add(this.leftKeyLight);
+
+    this.bluePointLight = new THREE.PointLight(0x2b7fff, 6.0, 1400);
+    this.bluePointLight.position.set(0, -60, 280);
     this.scene.add(this.bluePointLight);
   }
 
@@ -227,9 +225,9 @@ class ThreeKineticEngine {
     const height = window.innerHeight;
     const isMobile = width < 640;
 
-    this.camera.fov = isMobile ? 52 : 45;
+    this.camera.fov = isMobile ? 50 : 45;
     this.camera.aspect = width / height;
-    this.camera.position.z = isMobile ? 620 : 650;
+    this.camera.position.z = isMobile ? 580 : 620;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(width, height);
   }
@@ -280,70 +278,72 @@ class ThreeKineticEngine {
     const isMobile = window.innerWidth < 640;
     const isTablet = window.innerWidth >= 640 && window.innerWidth < 1024;
 
-    // Sizing tuned for mobile and desktop screens
     let fontSize = isMobile ? (text.length > 20 ? 12 : 14) : (isTablet ? 16 : (text.length > 20 ? 15 : (text.length > 12 ? 17 : 20)));
-    const extrudeDepth = isMobile ? 2.2 : 3.5;
 
-    // 3D Extruded Geometry with Smooth Bevels
+    const extrudeDepth = isMobile ? 6.0 : 8.5;
+
     const geometry = new THREE.TextGeometry(text, {
       font: this.loadedFont,
       size: fontSize,
       height: extrudeDepth,
-      curveSegments: 4,
+      curveSegments: 5,
       bevelEnabled: true,
-      bevelThickness: isMobile ? 0.5 : 0.7,
-      bevelSize: isMobile ? 0.35 : 0.5,
+      bevelThickness: isMobile ? 1.0 : 1.4,
+      bevelSize: isMobile ? 0.7 : 0.95,
       bevelOffset: 0,
-      bevelSegments: 3
+      bevelSegments: 4
     });
 
     geometry.computeBoundingBox();
     const rawWidth = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
     geometry.center();
 
-    // Calculate viewport bounds at target depth
-    const startZ = (Math.random() * 2 - 1) * (isMobile ? 50 : 80) - 20;
+    const startZ = (Math.random() * 2 - 1) * (isMobile ? 40 : 70) - 20;
     const { visibleWidth, visibleHeight } = this.getVisibleBounds(startZ);
 
-    // Guaranteed Mobile Fit: scale down if wider than 78% of phone screen
-    const maxAllowedWidth = visibleWidth * (isMobile ? 0.78 : 0.85);
+    const maxAllowedWidth = visibleWidth * (isMobile ? 0.76 : 0.85);
     let scaleMultiplier = 1.0;
     if (rawWidth > maxAllowedWidth) {
       scaleMultiplier = maxAllowedWidth / rawWidth;
     }
 
-    // Material setup: Bone front face, metallic dark blue sides
     const frontMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      roughness: 0.25,
-      metalness: 0.45,
+      roughness: 0.12,
+      metalness: 0.65,
       transparent: true,
       opacity: 0
     });
 
     const sideMat = new THREE.MeshStandardMaterial({
-      color: 0x1a2130,
+      color: 0x111827,
       roughness: 0.35,
-      metalness: 0.8,
-      emissive: 0x071530,
+      metalness: 0.85,
+      emissive: 0x0c2550,
+      emissiveIntensity: 0.55,
       transparent: true,
       opacity: 0
     });
 
-    const mesh = new THREE.Mesh(geometry, [frontMat, sideMat]);
-
-    // Position safely within visible boundaries
-    const maxSpawnX = Math.max(0, (visibleWidth - rawWidth * scaleMultiplier) / 2 * 0.75);
+    const maxSpawnX = Math.max(0, (visibleWidth - rawWidth * scaleMultiplier) / 2 * 0.76);
     const startX = (Math.random() * 2 - 1) * maxSpawnX;
-    
-    // On mobile, keep Y in upper 60% of viewport to stay safely away from the bottom audio player
-    const maxSpawnY = (visibleHeight / 2) * (isMobile ? 0.55 : 0.65);
+
+    const maxSpawnY = (visibleHeight / 2) * (isMobile ? 0.52 : 0.62);
     const startY = (Math.random() * 2 - 1) * maxSpawnY + (isMobile ? 35 : 0);
 
-    const baseRotX = (Math.random() * 2 - 1) * (isMobile ? 0.12 : 0.18);
-    const baseRotY = (Math.random() * 2 - 1) * (isMobile ? 0.16 : 0.25);
-    const baseRotZ = (Math.random() * 2 - 1) * (isMobile ? 0.05 : 0.08);
+    const normX = maxSpawnX > 0 ? (startX / maxSpawnX) : 0;
+    let baseRotY = 0;
+    if (Math.abs(normX) > 0.14) {
+      const angleMagnitude = 0.32 + Math.abs(normX) * 0.16;
+      baseRotY = normX < 0 ? angleMagnitude : -angleMagnitude;
+    } else {
+      baseRotY = 0;
+    }
 
+    const baseRotX = (Math.random() - 0.45) * (Math.abs(baseRotY) > 0 ? 0.20 : 0.08);
+    const baseRotZ = (Math.random() * 2 - 1) * 0.04;
+
+    const mesh = new THREE.Mesh(geometry, [frontMat, sideMat]);
     mesh.position.set(startX, startY, startZ);
     mesh.rotation.set(baseRotX, baseRotY, baseRotZ);
     mesh.scale.set(0.1, 0.1, 0.1);
@@ -361,8 +361,8 @@ class ThreeKineticEngine {
       baseRotY,
       baseRotZ,
       scaleMultiplier,
-      floatSpeedY: (isMobile ? 12 : 20) + Math.random() * 10,
-      floatSpeedX: (Math.random() - 0.5) * (isMobile ? 6 : 10),
+      floatSpeedY: (isMobile ? 14 : 22) + Math.random() * 10,
+      floatSpeedX: (Math.random() - 0.5) * (isMobile ? 8 : 12),
       frontMat,
       sideMat
     });
@@ -438,12 +438,18 @@ class ThreeKineticEngine {
 
         const currentY = p.startY + progress * p.floatSpeedY;
         const currentX = p.startX + Math.sin(progress * Math.PI) * p.floatSpeedX;
-        const currentZ = p.startZ + progress * 12;
+        const currentZ = p.startZ + progress * 14;
 
         p.mesh.position.set(currentX, currentY, currentZ);
+
+        const rotDriftY = p.baseRotY !== 0
+          ? Math.sin(progress * Math.PI * 1.5) * 0.06 * (p.baseRotY > 0 ? 1 : -1)
+          : 0;
+        const rotDriftX = Math.cos(progress * Math.PI * 1.5) * 0.03;
+
         p.mesh.rotation.set(
-          p.baseRotX + Math.sin(progress * 2) * 0.03,
-          p.baseRotY + Math.cos(progress * 2) * 0.04,
+          p.baseRotX + rotDriftX,
+          p.baseRotY + rotDriftY,
           p.baseRotZ
         );
 
