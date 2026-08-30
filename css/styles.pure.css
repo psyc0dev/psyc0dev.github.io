@@ -1768,6 +1768,7 @@ grid-template-columns:1fr!important
 
 .player-vol-group:hover .player-vol-popup,
 .player-vol-group:focus-within .player-vol-popup,
+.player-vol-group.vol-open .player-vol-popup,
 .player-vol-popup:hover {
   opacity: 1;
   visibility: visible;
@@ -1788,21 +1789,99 @@ grid-template-columns:1fr!important
   margin: 0;
 }
 
+.mobile-only {
+  display: none !important;
+}
+
+.player-btn-hide {
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  color: var(--color-fog);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  border-radius: var(--radius-icons);
+  transition: color 0.15s ease, transform 0.15s ease;
+  flex-shrink: 0;
+}
+
+.player-btn-hide:hover {
+  color: var(--color-bone);
+  transform: translateY(1px);
+}
+
+.site-player-fab {
+  position: fixed;
+  bottom: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-buttons);
+  background-color: var(--color-graphite-card);
+  border: 1px solid var(--color-slate-elevated);
+  color: var(--color-voltage-blue);
+  box-shadow: var(--shadow-subtle);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1999;
+  opacity: 0;
+  pointer-events: none;
+  transform: scale(0.8) translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.site-player-fab svg {
+  width: 14px;
+  height: 14px;
+}
+
+.site-player-fab.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1) translateY(0);
+}
+
+.site-player-fab:hover {
+  background-color: var(--color-slate-elevated);
+  border-color: var(--color-voltage-blue);
+  color: var(--color-pure-white);
+}
+
 .hidden { display: none !important; }
 
 /* Mobile override */
 @media (max-width: 600px) {
+  .mobile-only {
+    display: inline-flex !important;
+  }
+  .site-player-fab {
+    display: flex;
+  }
   .site-audio-player {
     bottom: 12px;
     right: 12px;
     left: 12px;
-    height: 32px;
-    padding: 0 10px 0 6px;
+    height: 34px;
+    padding: 0 8px 0 6px;
     justify-content: space-between;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  }
+  .site-audio-player.minimized {
+    transform: translateY(calc(100% + 20px));
+    opacity: 0;
+    pointer-events: none;
   }
   .player-scrubber-track {
     flex: 1;
     width: auto;
+    margin: 0 4px;
   }
 }
 

@@ -89,7 +89,7 @@
           id="hello-lottie-player"
           src="assets/Welcome.lottie"
           background="transparent"
-          speed="1"
+          speed="1.35"
           autoplay
         >
         </dotlottie-player>
@@ -201,11 +201,19 @@
           </a>
           <a href="#contact" class="mobile-nav-link mobile-cta-link">
             <span class="mobile-nav-index">05</span>
-            <i
-              data-lucide="send"
+            <svg
+              viewBox="0 0 24 24"
+              width="15"
+              height="15"
+              fill="currentColor"
               class="anim-icon"
-              style="width: 16px; height: 16px"
-            ></i>
+              style="width: 15px; height: 15px; color: var(--color-voltage-blue)"
+              aria-hidden="true"
+            >
+              <path
+                d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"
+              />
+            </svg>
             <span class="mobile-nav-label">Contact Me</span>
             <i data-lucide="arrow-right" class="mobile-nav-arrow" style="width: 14px; height: 14px"></i>
           </a>
@@ -861,14 +869,6 @@
             <span class="footer-hand">Designed and built by psyc0dev.</span>
             <span class="footer-mit">MIT License</span></span
           >
-          <a href="#top" class="back-to-top">
-            <span>Back to top</span>
-            <i
-              data-lucide="arrow-up"
-              class="anim-icon"
-              style="width: 13px; height: 13px"
-            ></i>
-          </a>
         </div>
       </div>
     </footer>
@@ -879,7 +879,7 @@
     <script src="js/i18n.js"></script>
   
   <!-- Persistent Audio Player (Ultra-Compact Midnight Editorial) -->
-  <aside class="site-audio-player" aria-label="Audio Player">
+  <aside class="site-audio-player" id="site-audio-player" aria-label="Audio Player">
     <button class="player-btn-play" id="site-btn-play" aria-label="Play / Pause" title="Play">
       <svg id="site-icon-play" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
       <svg id="site-icon-pause" class="hidden" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
@@ -894,11 +894,19 @@
         <svg id="site-vol-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
       </button>
       <div class="player-vol-popup">
-        <input type="range" min="0" max="1" step="0.01" value="0.5" class="vol-slider-vert" id="site-vol-slider" orient="vertical" aria-label="Volume" />
+        <input type="range" min="0" max="1" step="0.01" value="0.3" class="vol-slider-vert" id="site-vol-slider" orient="vertical" aria-label="Volume" />
       </div>
     </div>
+    <button class="player-btn-hide mobile-only" id="site-btn-hide" aria-label="Hide Player" title="Hide Player">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+    </button>
     <audio id="site-audio-element" src="assets/double_life.mp3" preload="none"></audio>
   </aside>
+
+  <!-- Restore Floating Badge (Mobile & Compact) -->
+  <button class="site-player-fab" id="site-player-fab" aria-label="Show Music Player" title="Show Player">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+  </button>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -911,6 +919,9 @@
       const timeCurrent = document.getElementById('site-time-current');
       const btnMute = document.getElementById('site-btn-mute');
       const volSlider = document.getElementById('site-vol-slider');
+      const playerContainer = document.getElementById('site-audio-player');
+      const btnHide = document.getElementById('site-btn-hide');
+      const playerFab = document.getElementById('site-player-fab');
 
       const formatTime = (sec) => {
         if (isNaN(sec)) return '0:00';
@@ -919,9 +930,23 @@
         return `${m}:${s < 10 ? '0' : ''}${s}`;
       };
 
-      // Default 50% volume
+      // Default volume
       audio.volume = 0.3;
       volSlider.value = 0.3;
+
+      if (btnHide && playerFab && playerContainer) {
+        btnHide.addEventListener('click', () => {
+          playerContainer.classList.add('minimized');
+          playerFab.classList.add('visible');
+        });
+
+        playerFab.addEventListener('click', () => {
+          playerContainer.classList.remove('minimized');
+          playerFab.classList.remove('visible');
+        });
+      }
+
+      const volGroup = document.querySelector('.player-vol-group');
 
       volSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
@@ -930,18 +955,35 @@
         btnMute.style.opacity = audio.muted ? '0.4' : '1';
       });
 
-      let lastVolume = 0.5;
-      btnMute.addEventListener('click', () => {
-        if (audio.muted || audio.volume === 0) {
-          audio.muted = false;
-          audio.volume = lastVolume || 0.5;
-          volSlider.value = audio.volume;
-          btnMute.style.opacity = '1';
+      let lastVolume = 0.3;
+      btnMute.addEventListener('click', (e) => {
+        const isMobileScreen = window.innerWidth <= 768;
+        if (isMobileScreen) {
+          // On mobile, tapping volume icon simply reveals/toggles the volume setting popup
+          e.stopPropagation();
+          if (volGroup) {
+            volGroup.classList.toggle('vol-open');
+          }
         } else {
-          lastVolume = audio.volume;
-          audio.muted = true;
-          volSlider.value = 0;
-          btnMute.style.opacity = '0.4';
+          // On desktop, clicking toggles mute
+          if (audio.muted || audio.volume === 0) {
+            audio.muted = false;
+            audio.volume = lastVolume || 0.3;
+            volSlider.value = audio.volume;
+            btnMute.style.opacity = '1';
+          } else {
+            lastVolume = audio.volume;
+            audio.muted = true;
+            volSlider.value = 0;
+            btnMute.style.opacity = '0.4';
+          }
+        }
+      });
+
+      // Close volume popup on outside click on mobile
+      document.addEventListener('click', (e) => {
+        if (volGroup && volGroup.classList.contains('vol-open') && !volGroup.contains(e.target)) {
+          volGroup.classList.remove('vol-open');
         }
       });
 
