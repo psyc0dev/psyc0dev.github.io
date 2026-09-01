@@ -24,9 +24,11 @@ const WORD_SYNCED_LYRICS = [
   { time: 23.67, text: "what have you done?", isAdlib: false },
   { time: 26.32, text: "some of your dirt", isAdlib: false },
   { time: 27.47, text: "has come to light", isAdlib: false },
-  { time: 29.72, text: "why were you speedin'", isAdlib: false },
+  { time: 29.72, text: "why were you", isAdlib: false },
+  { time: 30.15, text: "speedin'", isAdlib: false },
   { time: 30.87, text: "up that hill", isAdlib: false },
-  { time: 31.67, text: "until the brakes", isAdlib: false },
+  { time: 31.67, text: "until", isAdlib: false },
+  { time: 32.10, text: "the brakes", isAdlib: false },
   { time: 32.57, text: "come off?", isAdlib: false },
   { time: 34.47, text: "and someone saw you", isAdlib: false },
   { time: 35.72, text: "in a fight", isAdlib: false },
@@ -56,9 +58,11 @@ const WORD_SYNCED_LYRICS = [
   { time: 73.62, text: "what have you done?", isAdlib: false },
   { time: 76.22, text: "some of your dirt", isAdlib: false },
   { time: 77.32, text: "has come to light", isAdlib: false },
-  { time: 79.67, text: "why were you speedin'", isAdlib: false },
+  { time: 79.67, text: "why were you", isAdlib: false },
+  { time: 80.15, text: "speedin'", isAdlib: false },
   { time: 80.82, text: "up that hill", isAdlib: false },
-  { time: 81.87, text: "until the brakes", isAdlib: false },
+  { time: 81.87, text: "until", isAdlib: false },
+  { time: 82.10, text: "the brakes", isAdlib: false },
   { time: 82.42, text: "come off?", isAdlib: false },
   { time: 84.47, text: "and someone saw you", isAdlib: false },
   { time: 85.72, text: "in a fight", isAdlib: false },
@@ -89,17 +93,24 @@ const WORD_SYNCED_LYRICS = [
   { time: 125.72, text: "if anyone can do it,", isAdlib: false },
   { time: 127.72, text: "you gotta get there soon,", isAdlib: false },
   { time: 129.52, text: "it's not okay", isAdlib: false },
-  { time: 131.77, text: "you got cars to drive,", isAdlib: false },
-  { time: 133.42, text: "plenty jets to fly", isAdlib: false },
+  { time: 131.77, text: "you got", isAdlib: false },
+  { time: 132.17, text: "cars to drive,", isAdlib: false },
+  { time: 133.42, text: "plenty", isAdlib: false },
+  { time: 133.82, text: "jets to fly", isAdlib: false },
   { time: 135.27, text: "when will you arrive?", isAdlib: false },
   { time: 136.97, text: "you're running out of time", isAdlib: false },
-  { time: 139.32, text: "don't you see that", isAdlib: false },
-  { time: 140.67, text: "everything is on the line?", isAdlib: false },
+  { time: 139.32, text: "don't you", isAdlib: false },
+  { time: 139.72, text: "see that", isAdlib: false },
+  { time: 140.67, text: "everything", isAdlib: false },
+  { time: 141.17, text: "is on the line?", isAdlib: false },
   { time: 143.47, text: "so i'm sorry,", isAdlib: false },
   { time: 144.82, text: "but you have to", isAdlib: false },
   { time: 145.67, text: "choose a side", isAdlib: false },
-  { time: 147.32, text: "you'll never know", isAdlib: false },
-  { time: 148.72, text: "when it's your time to go", isAdlib: false },
+  { time: 147.32, text: "you'll never", isAdlib: false },
+  { time: 147.72, text: "know", isAdlib: false },
+  { time: 148.72, text: "when it's", isAdlib: false },
+  { time: 149.12, text: "your time", isAdlib: false },
+  { time: 149.52, text: "to go", isAdlib: false },
   { time: 151.77, text: "and where you end up", isAdlib: false },
   { time: 153.17, text: "in life, that's code", isAdlib: false },
   { time: 155.77, text: "you can't ignore,", isAdlib: false },
@@ -108,8 +119,10 @@ const WORD_SYNCED_LYRICS = [
   { time: 160.77, text: "'cause you spent all your time", isAdlib: false },
   { time: 163.37, text: "it's now or never,", isAdlib: false },
   { time: 165.02, text: "on this, everything rides", isAdlib: false },
-  { time: 167.42, text: "before the spinning stops,", isAdlib: false },
-  { time: 169.52, text: "you must pick a side", isAdlib: false },
+  { time: 167.42, text: "before", isAdlib: false },
+  { time: 167.82, text: "the spinning stops,", isAdlib: false },
+  { time: 169.52, text: "you must", isAdlib: false },
+  { time: 169.92, text: "pick a side", isAdlib: false },
   { time: 173.67, text: "who will you be", isAdlib: false },
   { time: 175.17, text: "tonight?", isAdlib: false },
   { time: 176.17, text: "that's the question", isAdlib: false },
@@ -247,7 +260,6 @@ class ThreeKineticEngine {
     this.activeParticles = [];
     this.currentIdx = 0;
 
-    const now = Date.now();
     for (let i = 0; i < this.lyricsQueue.length; i++) {
       const line = this.lyricsQueue[i];
       const nextStart = i + 1 < this.lyricsQueue.length ? this.lyricsQueue[i + 1].timestampMs : line.timestampMs + 2800;
@@ -256,7 +268,7 @@ class ThreeKineticEngine {
       if (timeMs >= line.timestampMs) {
         const timeSince = timeMs - line.timestampMs;
         if (timeSince < duration) {
-          this.spawnParticle(line.text, now - timeSince, duration, line.isAdlib);
+          this.spawnParticle(line.text, line.timestampMs, duration, line.isAdlib);
         }
         this.currentIdx = i + 1;
       } else {
@@ -265,7 +277,7 @@ class ThreeKineticEngine {
     }
   }
 
-  spawnParticle(text, spawnTimeMs, durationMs, isAdlib = false) {
+  spawnParticle(text, lyricTimestampMs, durationMs, isAdlib = false) {
     if (!text || !text.trim() || !this.loadedFont) return;
 
     while (this.activeParticles.length >= 4) {
@@ -327,11 +339,17 @@ class ThreeKineticEngine {
       opacity: 0
     });
 
-    const maxSpawnX = Math.max(0, (visibleWidth - rawWidth * scaleMultiplier) / 2 * 0.76);
-    const startX = (Math.random() * 2 - 1) * maxSpawnX;
+    this.spawnIndex = (this.spawnIndex || 0) + 1;
+    
+    const maxSpawnX = Math.max(0, (visibleWidth - rawWidth * scaleMultiplier) / 2 * 0.65);
+    const maxSpawnY = (visibleHeight / 2) * (isMobile ? 0.45 : 0.55);
 
-    const maxSpawnY = (visibleHeight / 2) * (isMobile ? 0.52 : 0.62);
-    const startY = (Math.random() * 2 - 1) * maxSpawnY + (isMobile ? 35 : 0);
+    // Golden ratio spread to prevent overlaps
+    const angle = this.spawnIndex * 137.5 * (Math.PI / 180);
+    const radius = 0.3 + 0.7 * ((this.spawnIndex % 5) / 4); // Varies distance from center
+
+    const startX = Math.cos(angle) * radius * maxSpawnX;
+    const startY = Math.sin(angle) * radius * maxSpawnY + (isMobile ? 35 : 0);
 
     const normX = maxSpawnX > 0 ? (startX / maxSpawnX) : 0;
     let baseRotY = 0;
@@ -354,7 +372,7 @@ class ThreeKineticEngine {
 
     this.activeParticles.push({
       mesh,
-      spawnTimeMs,
+      lyricTimestampMs,
       durationMs,
       startX,
       startY,
@@ -388,10 +406,17 @@ class ThreeKineticEngine {
 
   startLoop() {
     const tick = () => {
-      const now = Date.now();
+      this.playbackTimeMs = this.getExactTimeMs();
+      
+      if (this.lastPlaybackTimeMs !== undefined) {
+        const delta = this.playbackTimeMs - this.lastPlaybackTimeMs;
+        if (delta < -200 || delta > 1500) {
+          this.resync(this.playbackTimeMs);
+        }
+      }
+      this.lastPlaybackTimeMs = this.playbackTimeMs;
 
       if (!this.audio.paused) {
-        this.playbackTimeMs = this.getExactTimeMs();
         const leadTimeMs = this.playbackTimeMs + 40;
 
         while (this.currentIdx < this.lyricsQueue.length) {
@@ -400,10 +425,7 @@ class ThreeKineticEngine {
           const duration = Math.max(1400, Math.min(3600, nextStart - line.timestampMs + 500));
 
           if (leadTimeMs >= line.timestampMs) {
-            const timeSince = leadTimeMs - line.timestampMs;
-            if (timeSince < duration) {
-              this.spawnParticle(line.text, now - timeSince, duration, line.isAdlib);
-            }
+            this.spawnParticle(line.text, line.timestampMs, duration, line.isAdlib);
             this.currentIdx++;
           } else {
             break;
@@ -413,7 +435,7 @@ class ThreeKineticEngine {
 
       for (let i = this.activeParticles.length - 1; i >= 0; i--) {
         const p = this.activeParticles[i];
-        const elapsed = now - p.spawnTimeMs;
+        const elapsed = this.playbackTimeMs - p.lyricTimestampMs;
 
         if (elapsed >= p.durationMs) {
           this.scene.remove(p.mesh);

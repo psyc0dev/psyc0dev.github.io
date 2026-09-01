@@ -858,8 +858,8 @@
 
   <aside class="site-audio-player" id="site-audio-player" aria-label="Audio Player">
     <button class="player-btn-play" id="site-btn-play" aria-label="Play / Pause" title="Play">
-      <svg id="site-icon-play" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><polygon points="6 4 20 12 6 20"></polygon></svg>
-      <svg id="site-icon-pause" class="hidden" viewBox="0 0 24 24" width="10" height="10" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"></rect><rect x="14" y="4" width="4" height="16" rx="1"></rect></svg>
+      <svg id="site-icon-play" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-play"><polygon points="6 3 20 12 6 21"/></svg>
+      <svg id="site-icon-pause" class="hidden" xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-pause"><rect x="14" y="4" width="4" height="16" rx="1"/><rect x="6" y="4" width="4" height="16" rx="1"/></svg>
     </button>
     <span class="player-track-name">Double Life</span>
     <div class="player-scrubber-track" id="site-scrubber" title="Seek">
@@ -868,20 +868,24 @@
     <span class="player-time" id="site-time-current">0:00</span>
     <div class="player-vol-group">
       <button class="player-btn-mute" id="site-btn-mute" aria-label="Volume & Mute" title="Volume">
-        <svg id="site-vol-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+        <svg id="site-vol-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-volume-2">
+          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+          <path id="site-vol-waves" d="M15.54 8.46a5 5 0 0 1 0 7.07M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          <path id="site-vol-mute-x" d="M22 9l-6 6M16 9l6 6" style="display: none;"></path>
+        </svg>
       </button>
       <div class="player-vol-popup">
         <input type="range" min="0" max="1" step="0.01" value="0.3" class="vol-slider-vert" id="site-vol-slider" orient="vertical" aria-label="Volume" />
       </div>
     </div>
     <button class="player-btn-hide mobile-only" id="site-btn-hide" aria-label="Hide Player" title="Hide Player">
-      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-down"><path d="m6 9 6 6 6-6"/></svg>
     </button>
     <audio id="site-audio-element" src="assets/double_life.mp3" preload="none"></audio>
   </aside>
 
   <button class="site-player-fab" id="site-player-fab" aria-label="Show Music Player" title="Show Player">
-    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-music"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
   </button>
 
   <script>
@@ -923,11 +927,28 @@
 
       const volGroup = document.querySelector('.player-vol-group');
 
+      const updateMuteUI = () => {
+        const isMuted = audio.muted || audio.volume === 0;
+        const volWaves = document.getElementById('site-vol-waves');
+        const volMuteX = document.getElementById('site-vol-mute-x');
+        if (isMuted) {
+          btnMute.style.opacity = '1';
+          btnMute.style.color = '#ef4444'; // Red
+          if (volWaves) volWaves.style.display = 'none';
+          if (volMuteX) volMuteX.style.display = 'block';
+        } else {
+          btnMute.style.opacity = '1';
+          btnMute.style.color = ''; // Reset
+          if (volWaves) volWaves.style.display = 'block';
+          if (volMuteX) volMuteX.style.display = 'none';
+        }
+      };
+
       volSlider.addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
         audio.volume = val;
         audio.muted = val === 0;
-        btnMute.style.opacity = audio.muted ? '0.4' : '1';
+        updateMuteUI();
       });
 
       let lastVolume = 0.3;
@@ -945,13 +966,12 @@
             audio.muted = false;
             audio.volume = lastVolume || 0.3;
             volSlider.value = audio.volume;
-            btnMute.style.opacity = '1';
           } else {
             lastVolume = audio.volume;
             audio.muted = true;
             volSlider.value = 0;
-            btnMute.style.opacity = '0.4';
           }
+          updateMuteUI();
         }
       });
 
@@ -982,11 +1002,39 @@
         scrubberFill.style.width = Math.min(100, (current / total) * 100) + '%';
       });
 
-      scrubber.addEventListener('click', (e) => {
+      let isDraggingScrubber = false;
+
+      const updateScrubber = (clientX) => {
         const rect = scrubber.getBoundingClientRect();
-        const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+        const ratio = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
         if (audio.duration) {
           audio.currentTime = ratio * audio.duration;
+        }
+      };
+
+      scrubber.addEventListener('pointerdown', (e) => {
+        isDraggingScrubber = true;
+        updateScrubber(e.clientX);
+        scrubber.setPointerCapture(e.pointerId);
+      });
+
+      scrubber.addEventListener('pointermove', (e) => {
+        if (isDraggingScrubber) {
+          updateScrubber(e.clientX);
+        }
+      });
+
+      scrubber.addEventListener('pointerup', (e) => {
+        if (isDraggingScrubber) {
+          isDraggingScrubber = false;
+          scrubber.releasePointerCapture(e.pointerId);
+        }
+      });
+
+      scrubber.addEventListener('pointercancel', (e) => {
+        if (isDraggingScrubber) {
+          isDraggingScrubber = false;
+          scrubber.releasePointerCapture(e.pointerId);
         }
       });
 

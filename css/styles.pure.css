@@ -1091,25 +1091,31 @@ color:var(--color-voltage-blue)
 
 .toast-msg {
 position:fixed;
-bottom:24px;
+bottom:64px;
 right:24px;
-background:var(--color-iron-peak);
+background-color:var(--color-graphite-card);
 color:var(--color-bone);
 font-family:var(--font-inter);
 font-size:13px;
 font-weight:500;
-padding:10px 18px;
+white-space:nowrap;
+display:inline-flex;
+align-items:center;
+padding:6px 14px;
 border-radius:var(--radius-buttons);
-border:1px solid var(--color-pewter);
+border:1px solid var(--color-slate-elevated);
+box-shadow:var(--shadow-subtle);
+backdrop-filter:blur(12px);
+-webkit-backdrop-filter:blur(12px);
 z-index:9999;
-transform:translateY(100px);
+transform:translateY(30px) scale(0.9);
 opacity:0;
-transition:all .3s cubic-bezier(0.16,1,0.3,1);
+transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
 pointer-events:none
 }
 
 .toast-msg.show {
-transform:translateY(0);
+transform:translateY(0) scale(1);
 opacity:1
 }
 
@@ -1889,4 +1895,17 @@ grid-template-columns:1fr!important
   height: 100vh;
   pointer-events: none;
   z-index: 1500;
+}
+
+@media (max-width: 600px) {
+  .toast-msg {
+    right: 50%;
+    transform: translate(50%, 30px) scale(0.9);
+  }
+  .toast-msg.show {
+    transform: translate(50%, 0) scale(1);
+  }
+  body:has(.site-audio-player.minimized) .toast-msg {
+    bottom: 24px;
+  }
 }

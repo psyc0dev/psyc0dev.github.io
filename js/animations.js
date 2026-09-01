@@ -583,6 +583,10 @@ class AnimationController {
       document.body.appendChild(toast);
     }
     toast.textContent = message;
+    
+    // Force a DOM reflow so the browser registers the initial state before the transition
+    toast.offsetHeight; 
+    
     toast.classList.add('show');
 
     setTimeout(() => {
