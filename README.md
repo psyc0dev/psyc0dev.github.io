@@ -2,7 +2,7 @@
   <h1 align="center">Hi there, I'm psyc0dev <img src="https://media.giphy.com/media/hvRJCLFzcasr14yMyH/giphy.gif" width="35"></h1>
 
   <p align="center">
-    <strong>developer — desktop apps, web platforms, Telegram bots, Rust tooling, external game cheats</strong>
+    <strong>developer - desktop apps, web platforms, Telegram bots, Rust tooling, external game cheats</strong>
   </p>
   
   <p align="center">
@@ -18,7 +18,7 @@
 
 <div align="center">
   <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=rust,go,c,cpp,js,ts,html,css,nodejs,git,mysql,postgres,mongodb&theme=dark&perline=7" />
+    <img src="https://skillicons.dev/icons?i=rust,go,c,cpp,js,ts,html,css,nodejs,git,mysql,postgres,mongodb,lua&theme=dark&perline=7" />
   </a>
 </div>
 
