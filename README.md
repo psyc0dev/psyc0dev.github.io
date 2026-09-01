@@ -17,9 +17,7 @@
 <h2 align="center">🛠️ Tech Stack & Databases</h2>
 
 <div align="center">
-  <a href="https://skillicons.dev">
-    <img src="https://skillicons.dev/icons?i=rust,go,c,cpp,js,ts,html,css,nodejs,git,mysql,postgres,mongodb,lua&theme=dark&perline=7" />
-  </a>
+  <img src="https://skillicons.dev/icons?i=rust,go,c,cpp,js,ts,html,css,nodejs,git,mysql,postgres,mongodb,lua&theme=dark&perline=7" />
 </div>
 
 <br>
