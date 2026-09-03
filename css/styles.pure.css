@@ -1861,6 +1861,11 @@ grid-template-columns:1fr!important
 .hidden { display: none !important; }
 
 @media (max-width: 600px) {
+  body:not(.enable-mobile-player) .site-audio-player,
+  body:not(.enable-mobile-player) .site-player-fab {
+    display: none !important;
+  }
+  
   .mobile-only {
     display: inline-flex !important;
   }

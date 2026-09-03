@@ -889,7 +889,12 @@
   </button>
 
   <script>
+    const SHOW_PLAYER_ON_MOBILE = false;
+    
     document.addEventListener('DOMContentLoaded', () => {
+      if (SHOW_PLAYER_ON_MOBILE) {
+        document.body.classList.add('enable-mobile-player');
+      }
       const audio = document.getElementById('site-audio-element');
       const btnPlay = document.getElementById('site-btn-play');
       const iconPlay = document.getElementById('site-icon-play');
