@@ -390,7 +390,7 @@ color:var(--color-bone);
 font-weight:500
 }
 
-.nav-link.active::after {
+.nav-link::after {
 content:'';
 position:absolute;
 bottom:0;
@@ -398,7 +398,14 @@ left:0;
 right:0;
 height:2px;
 background-color:var(--color-voltage-blue);
-box-shadow:0 0 10px #2b7fffb3
+box-shadow:0 0 10px #2b7fffb3;
+transform:scaleX(0);
+transform-origin:center;
+transition:transform .3s cubic-bezier(0.16,1,0.3,1)
+}
+
+.nav-link.active::after {
+transform:scaleX(1)
 }
 
 .nav-action {
